@@ -11,7 +11,7 @@ const InstrumentSerifNotItalics = Instrument_Serif({
 
 export default function LandingPage(){
     return(
-        <div>
+        <div className="min-h-screen">
             <section>
                 <HeroSection/>
             </section>

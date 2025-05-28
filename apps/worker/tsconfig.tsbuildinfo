@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/services/generatethumbnail.ts","./src/services/queuer.ts"],"version":"5.7.2"}
+{"root":["./src/index.ts","./src/services/generatethumbnail.ts","./src/services/queuer.ts"],"version":"5.8.2"}
