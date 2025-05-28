@@ -18,12 +18,12 @@ export default function LandingPage(){
             <section className="flex flex-col items-center">
                 <Marquee/>
             </section>
-            <section className="">
+            {/* <section className="">
                 <BentoGrid/>
             </section>
             <section className="">
                 <ShowcaseSection/>
-            </section>
+            </section> */}
         </div>
     )
 }
