@@ -5,6 +5,9 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "db:generate": "cd packages/db && npx prisma generate && cd ../..",
+    "start:next":"",
+    "start:worker":"cd apps/worker/ && pnpm build && pnpm start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },

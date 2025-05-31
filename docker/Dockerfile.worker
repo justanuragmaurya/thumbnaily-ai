@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY ./package.json ./package.json
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
+COPY ./turbo.json ./turbo.json
+
+COPY ./packages ./packages
+
+COPY /apps/worker ./apps/worker
+
+RUN npm install -g pnpm 
+RUN pnpm install 
+
+CMD [ "pnpm","docker:dev"]

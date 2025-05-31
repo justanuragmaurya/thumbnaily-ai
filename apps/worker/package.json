@@ -7,6 +7,7 @@
     "dev": "tsc --build && node ./dist/index.js",
     "build": "tsc --build",
     "start": "node ./dist/index.js",
+    "docker:dev":"npx prisma migrate dev && pnpm build && pnpm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
