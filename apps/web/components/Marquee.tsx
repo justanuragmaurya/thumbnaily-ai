@@ -1,8 +1,12 @@
 "use client";
-import React from "react";
-import { motion } from "motion/react";
+import React, { useState } from "react";
+import { motion, useAnimation } from "motion/react";
 
 export default function Marquee() {
+  const [isPaused, setIsPaused] = useState(false);
+  const controls1 = useAnimation();
+  const controls2 = useAnimation();
+  
   const image = [
     "1.jpeg",
     "2.jpeg",
@@ -18,6 +22,24 @@ export default function Marquee() {
     "13.jpeg",
   ];
 
+  // Start animations on component mount
+  React.useEffect(() => {
+    if (!isPaused) {
+      controls1.start({
+        x: "-100%",
+        transition: { duration: 40, repeat: Infinity, ease: "linear" }
+      });
+      controls2.start({
+        x: "-100%",
+        transition: { duration: 40, repeat: Infinity, ease: "linear" }
+      });
+    } else {
+      // Pause animations by stopping at current position
+      controls1.stop();
+      controls2.stop();
+    }
+  }, [isPaused, controls1, controls2]);
+
   return (
     <>
       <motion.div
@@ -26,21 +48,23 @@ export default function Marquee() {
         animate={{ opacity: 100}}
         transition={{delay:0.5 , duration: 1.5 , ease:"easeOut"}}
       >
-        <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-background to-transparent z-10 w-32 pointer-events-none" />
-        <div className="absolute top-0 bottom-0 right-0 bg-gradient-to-l from-background to-transparent z-10 w-48 pointer-events-none" />
+        <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-background to-transparent z-10 w-16 sm:w-24 md:w-32 pointer-events-none" />
+        <div className="absolute top-0 bottom-0 right-0 bg-gradient-to-l from-background to-transparent z-10 w-24 sm:w-32 md:w-48 pointer-events-none" />
         
-        <div className="flex">
+        <div className="flex"
+             onMouseEnter={() => setIsPaused(true)}
+             onMouseLeave={() => setIsPaused(false)}
+        >
           <motion.div
             initial={{ x: 0 }}
-            animate={{ x: "-100%" }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            animate={controls1}
             className="flex flex-shrink-0 justify-start"
           >
             {image.map((image, index) => {
               return (
-                <div key={index} className="relative m-3 group">
+                <div key={index} className="relative m-1 sm:m-2 md:m-3 group">
                   <img
-                    className="w-96 rounded-xl relative z-0 transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="w-48 sm:w-64 md:w-80 lg:w-96 rounded-lg md:rounded-xl relative z-0 transition-transform duration-300 hover:-translate-y-2 md:hover:-translate-y-3"
                     src={`./${image}`}  
                     alt={`Image ${index + 1}`}
                   />
@@ -50,15 +74,14 @@ export default function Marquee() {
           </motion.div>
           <motion.div
             initial={{ x: 0 }}
-            animate={{ x: "-100%" }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="pl-3 flex flex-shrink-0 justify-start"
+            animate={controls2}
+            className="pl-1 sm:pl-2 md:pl-3 flex flex-shrink-0 justify-start"
           >
             {image.map((image, index) => {
               return (
-                <div key={index} className="relative m-3 group">
+                <div key={index} className="relative m-1 sm:m-2 md:m-3 group">
                   <img
-                    className="w-96 rounded-xl relative z-0 transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="w-48 sm:w-64 md:w-80 lg:w-96 rounded-lg md:rounded-xl relative z-0 transition-transform duration-300 hover:-translate-y-1"
                     src={`./${image}`}
                     alt={`Image ${index + 1}`}
                   />
