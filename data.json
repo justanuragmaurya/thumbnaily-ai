@@ -1,0 +1,40 @@
+{
+    "business_id": "bus_t73Kma8NwrCeOXl9600av",
+    "type": "subscription.renewed",
+    "timestamp": "2025-06-03T11:11:36.384538731Z",
+    "data": {
+        "payload_type": "Subscription",
+        "subscription_id": "sub_hMuINzaUfhbcJOfpCFRHF",
+        "recurring_pre_tax_amount": 500,
+        "tax_inclusive": false,
+        "currency": "USD",
+        "status": "active",
+        "created_at": "2025-06-03T11:11:15.118280Z",
+        "product_id": "pdt_9ZR8z7HxMb4IAriNnmi6c",
+        "quantity": 1,
+        "trial_period_days": 0,
+        "subscription_period_interval": "Month",
+        "payment_frequency_interval": "Month",
+        "subscription_period_count": 6,
+        "payment_frequency_count": 1,
+        "next_billing_date": "2025-07-03T11:11:36.144356Z",
+        "previous_billing_date": "2025-06-03T11:11:15.118280Z",
+        "customer": {
+            "customer_id": "cus_bltLj3rDQSzFZqYAJIE1y",
+            "name": "Anurag",
+            "email": "justanuragmaurya@gmail.com"
+        },
+        "metadata": {},
+        "discount_id": null,
+        "cancelled_at": null,
+        "billing": {
+            "country": "US",
+            "state": "District of Columbia",
+            "city": "Washington",
+            "street": "Washington, Washington",
+            "zipcode": "dqee"
+        },
+        "on_demand": false,
+        "addons": []
+    }
+}

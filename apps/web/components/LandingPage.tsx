@@ -1,8 +1,7 @@
 import { Instrument_Serif } from "next/font/google"
 import Marquee from "@/components/Marquee"
-import BentoGrid from "@/components/BentoGrid"
 import HeroSection from "@/components/HeroSection"
-import ShowcaseSection from "./showcase"
+import { WobbleCardDemo } from "./BentoGrid"
 
 const InstrumentSerifNotItalics = Instrument_Serif({
     subsets:["latin"],
@@ -18,12 +17,9 @@ export default function LandingPage(){
             <section className="flex flex-col items-center">
                 <Marquee/>
             </section>
-            {/* <section className="">
-                <BentoGrid/>
+            <section className="mt-32 p-5">
+                <WobbleCardDemo/>
             </section>
-            <section className="">
-                <ShowcaseSection/>
-            </section> */}
         </div>
     )
 }
