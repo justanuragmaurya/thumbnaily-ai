@@ -3,9 +3,9 @@
 import React from "react";
 import { WobbleCard } from "@/components/wobble-card";
 
-export function WobbleCardDemo() {
+export function BentoGridSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-6xl mx-auto w-full">
       <WobbleCard
         containerClassName="col-span-1 lg:col-span-2 h-full bg-pink-800 min-h-[500px] lg:min-h-[300px]"
         className=""

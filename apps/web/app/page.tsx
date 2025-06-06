@@ -1,10 +1,12 @@
+import Footer from "@/components/Footer";
 import LandingPage from "@/components/LandingPage";
-import { MaxWidthWrapper } from "@/components/MaxWidthWrapper";
-
+import Navbar from "@/components/Navbar";
 export default function Home() {
   return (
-    <MaxWidthWrapper>
-      <LandingPage/>
-    </MaxWidthWrapper>
+    <>
+    <Navbar/>
+    <LandingPage/>
+    <Footer/>
+    </>
   );
 }

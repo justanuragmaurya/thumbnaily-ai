@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
-import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
 
 const poppins = Poppins({
@@ -27,9 +25,7 @@ export default function RootLayout({
         className={`${poppins.className} antialiased`}
       >
         <Providers>
-          <Navbar/>
           {children}
-          <Footer/>
           <Toaster />
         </Providers>
       </body>

@@ -29,8 +29,8 @@ model Thumbnails{
   prompt String
   link String
   createdAt DateTime @default(now())
-  creator User @relation(fields: [creatorID], references: [id])
   creatorID String
+  creator User @relation(fields: [creatorID], references: [id])
 }
 
 

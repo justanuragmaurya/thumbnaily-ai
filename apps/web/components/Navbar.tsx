@@ -12,12 +12,18 @@ const InstrumentSerif = Instrument_Serif({
     style:"italic"
 })
 
-function Navbar() {
+interface NavbarProps {
+  onExternalMobileMenuToggle?: () => void;
+  isExternalMobileMenuOpen?: boolean;
+}
+
+function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
+    <div className='border-b'>
     <MaxWidthWrapper>
-      <div className='flex px-4 py-4 md:py-5 items-center justify-between'>
+      <div className='bg-transparent top-0 z-50 flex px-4 py-4 md:py-5 items-center justify-between'>
         <Link href={"/"} className="flex-shrink-0">
           <div className={`font-bold text-xl md:text-2xl ${InstrumentSerif.className}`}>
             Thumbnaily
@@ -26,19 +32,18 @@ function Navbar() {
         
         {/* Desktop Navigation */}
         <div className='hidden md:flex justify-center items-center gap-6 lg:gap-8 absolute left-1/2 transform -translate-x-1/2'>
-            <Link href='/' className='text-sm hover:text-primary/80 hover:scale-105 cursor-pointer transition'>Home</Link>
-            <Link href='/' className='text-sm hover:text-primary/80 hover:scale-105 cursor-pointer transition'>Services</Link>
-            <Link href='/' className='text-sm hover:text-primary/80 hover:scale-105 cursor-pointer transition'>Features</Link>
-            <Link href='/pricing' className='text-sm hover:text-primary/80 hover:scale-105 cursor-pointer transition'>Pricing</Link>
+          <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Home</Link>
+          <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Features</Link>
+          <Link href='/pricing' className='block py-2 text-sm hover:text-primary/80'>Pricing</Link>
         </div>
         
         {/* Mobile Menu Button */}
         <div className='md:hidden'>
           <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={onExternalMobileMenuToggle ? onExternalMobileMenuToggle : () => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-md"
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {(onExternalMobileMenuToggle ? isExternalMobileMenuOpen : mobileMenuOpen) ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
         
@@ -54,10 +59,9 @@ function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
+      {!onExternalMobileMenuToggle && mobileMenuOpen && (
         <div className="md:hidden py-4 px-2 space-y-4 bg-background border-t">
           <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Home</Link>
-          <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Services</Link>
           <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Features</Link>
           <Link href='/pricing' className='block py-2 text-sm hover:text-primary/80'>Pricing</Link>
           
@@ -71,7 +75,8 @@ function Navbar() {
           </div>
         </div>
       )}
-    </MaxWidthWrapper>
+      </MaxWidthWrapper>
+      </div>
   )
 }
 

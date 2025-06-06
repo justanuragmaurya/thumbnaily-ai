@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { motion, useAnimation } from "motion/react";
+import Image from "next/image";
+import { MaxWidthWrapper } from "./MaxWidthWrapper";
 
 export default function Marquee() {
   const [isPaused, setIsPaused] = useState(false);
@@ -41,7 +43,7 @@ export default function Marquee() {
   }, [isPaused, controls1, controls2]);
 
   return (
-    <>
+    <MaxWidthWrapper>
       <motion.div
         className="overflow-hidden relative"
         initial={{ opacity: 0}}
@@ -63,9 +65,11 @@ export default function Marquee() {
             {image.map((image, index) => {
               return (
                 <div key={index} className="relative m-1 sm:m-2 md:m-3 group">
-                  <img
+                  <Image
                     className="w-48 sm:w-64 md:w-80 lg:w-96 rounded-lg md:rounded-xl relative z-0 transition-transform duration-300 hover:-translate-y-2 md:hover:-translate-y-3"
-                    src={`./${image}`}  
+                    width={1920}
+                    height={1080}
+                    src={`/${image}`}  
                     alt={`Image ${index + 1}`}
                   />
                 </div>
@@ -80,9 +84,11 @@ export default function Marquee() {
             {image.map((image, index) => {
               return (
                 <div key={index} className="relative m-1 sm:m-2 md:m-3 group">
-                  <img
+                  <Image
                     className="w-48 sm:w-64 md:w-80 lg:w-96 rounded-lg md:rounded-xl relative z-0 transition-transform duration-300 hover:-translate-y-1"
-                    src={`./${image}`}
+                    width={1920}
+                    height={1080}
+                    src={`/${image}`}
                     alt={`Image ${index + 1}`}
                   />
                 </div>
@@ -91,6 +97,6 @@ export default function Marquee() {
           </motion.div>
         </div>
       </motion.div>
-    </>
+      </MaxWidthWrapper>
   );
 }
