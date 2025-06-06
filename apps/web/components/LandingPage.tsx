@@ -3,7 +3,6 @@ import Marquee from "@/components/Marquee";
 import HeroSection from "@/components/HeroSection";
 import { BentoGridSection } from "./BentoGrid";
 import DemoSection from "./demo";
-import { AnimatedGridPattern } from "./magicui/animated-grid-pattern";
 import { cn } from "@/lib/utils";
 
 const InstrumentSerifNotItalics = Instrument_Serif({
@@ -14,16 +13,6 @@ const InstrumentSerifNotItalics = Instrument_Serif({
 export default function LandingPage() {
   return (
     <div className="min-h-screen relative">
-      <AnimatedGridPattern
-        numSquares={30}
-        opacity={0.3}
-        duration={3}
-        repeatDelay={1}
-        className={cn(
-          "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
-          "inset-x-0 inset-y-[-30%] skew-y-12"
-        )}
-      />
       <section>
         <HeroSection />
       </section>

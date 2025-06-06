@@ -113,7 +113,7 @@ export default function GenerationPage() {
           </div>
         </div>        
         <div className="">
-        {!(images.length==0)&&<div className="grid grid-cols-2 gap-2 mt-10 p-10">
+        {!(images.length==0)&&<div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-10">
           {images &&
             [...images].reverse().map((image, index) => {
               return (

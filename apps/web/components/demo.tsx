@@ -9,11 +9,9 @@ const font = Instrument_Serif({
 
 export default function DemoSection(){
     return (
-        <div className="max-w-4xl mx-auto">
-            <div className="flex items-center w-full justify-center mb-2">
-                <h1 className="text-3xl font-bold flex items-center gap-2 bg-gradient-to-b from-primary to-[#7a7a7a] bg-clip-text text-transparent">See thumbnaily in <Cover>action</Cover> <ArrowBigDown size={40} /> </h1>
-            </div>
-            <div className="aspect-video">
+        <div className="max-w-4xl mx-auto flex flex-col text-center  justify-center">
+            <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2 bg-gradient-to-b from-primary to-[#7a7a7a] bg-clip-text text-transparent mx-auto">See thumbnaily in <Cover>action</Cover></h1>
+            <div className="aspect-video p-2">
                 <iframe
                     className="w-full h-full rounded-lg"
                     src="https://www.youtube.com/embed/dQw4w9WgXcQ"

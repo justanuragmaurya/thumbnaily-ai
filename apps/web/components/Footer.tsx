@@ -26,9 +26,9 @@ export default function Footer(){
                     <Link href={"/terms-and-condition"} className="hover:underline">
                         <h2>Terms And Condition</h2>
                     </Link>
-                    <Link href={"/refund-policy"} className="hover:underline">
+                    {/* <Link href={"/refund-policy"} className="hover:underline">
                         <h2>Refund Policy</h2>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
             

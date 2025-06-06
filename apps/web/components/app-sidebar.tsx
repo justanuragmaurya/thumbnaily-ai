@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DollarSign, Image, ImagePlus,MoonIcon,User2 } from 'lucide-react';
+import { DollarSign, Dot, Image, ImagePlus,MoonIcon,User2 } from 'lucide-react';
 import { Instrument_Serif } from 'next/font/google';
 import { ModeToggle } from './ModeToggle';
 interface AppSidebarProps {
@@ -38,8 +38,11 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isMobileMenuOpen, setIsMobileMe
         aria-label="Sidebar"
       >
         <div className="flex justify-between items-center mb-6 md:justify-start">
-          <div className='flex w-full justify-between items-center'>
-          <h1 className={`text-2xl font-black ml-2 bg-gradient-to-br from-blue-400 to-blue-300 text-transparent bg-clip-text`}>Thumbnaily</h1>
+          <div className='flex  w-full justify-between ml-2'>
+            <div>
+          <h1 className={`text-2xl font-black  bg-gradient-to-br from-blue-400 to-blue-300 text-transparent bg-clip-text`}>Thumbnaily</h1>
+          <h2 className='border border-[rgb(229,194,77)] px-5 py-0.5 w-max rounded-full flex text-xs text-[rgb(229,194,77)]'>Beta</h2>
+          </div>
           <ModeToggle/>
           </div>
           <button

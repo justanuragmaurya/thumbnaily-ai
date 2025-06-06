@@ -33,7 +33,7 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
         {/* Desktop Navigation */}
         <div className='hidden md:flex justify-center items-center gap-6 lg:gap-8 absolute left-1/2 transform -translate-x-1/2'>
           <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Home</Link>
-          <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Features</Link>
+          <Link href='/contact' className='block py-2 text-sm hover:text-primary/80'>Contact</Link>
           <Link href='/pricing' className='block py-2 text-sm hover:text-primary/80'>Pricing</Link>
         </div>
         
@@ -62,7 +62,7 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
       {!onExternalMobileMenuToggle && mobileMenuOpen && (
         <div className="md:hidden py-4 px-2 space-y-4 bg-background border-t">
           <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Home</Link>
-          <Link href='/' className='block py-2 text-sm hover:text-primary/80'>Features</Link>
+          <Link href='/contact' className='block py-2 text-sm hover:text-primary/80'>Contact</Link>
           <Link href='/pricing' className='block py-2 text-sm hover:text-primary/80'>Pricing</Link>
           
           <div className='flex items-center justify-between pt-3 border-t'>

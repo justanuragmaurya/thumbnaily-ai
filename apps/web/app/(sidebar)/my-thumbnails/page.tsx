@@ -15,7 +15,7 @@ export default function MyThumbnails() {
   return (
     <div className='m-5'>
     <h1 className='text-2xl font-bold'>Your Thumbnails</h1>
-    <div className='grid grid-cols-3'>
+    <div className='grid grid-cols-1 md:grid-cols-3'>
         {[...data].reverse().map((e:{link:string , createdAt:Date},index)=>{
             return(
                 <div className='p-2' key={index}>
