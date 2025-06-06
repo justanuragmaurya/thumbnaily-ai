@@ -2,6 +2,7 @@
 
 import React from "react";
 import { WobbleCard } from "@/components/wobble-card";
+import Image from "next/image";
 
 export function BentoGridSection() {
   return (
@@ -18,7 +19,7 @@ export function BentoGridSection() {
             Thumbnaily helps creators create videos instead of wasting time on thumbnails.
           </p>
         </div>
-        <img
+        <Image
           src="/image1.png"
           width={500}
           height={500}
@@ -44,7 +45,7 @@ export function BentoGridSection() {
             With over 1000 mothly active bot users, Thumbnaily is the best and the cheapest option for creators.
           </p>
         </div>
-        <img
+        <Image
           src="/image2.png"
           width={500}
           height={500}

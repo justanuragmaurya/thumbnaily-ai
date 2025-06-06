@@ -2,11 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
   if (status === "authenticated") {
     return (
       <div className="h-screen flex flex-col w-full items-center justify-center">

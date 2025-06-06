@@ -86,7 +86,7 @@ function Waitlist() {
             <>Join Waitlist <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4"/></>
           }
       </button>
-      <h2 className="text-xs sm:text-sm mt-4 text-primary/50">We promise, we won't spam your mailbox</h2>
+      <h2 className="text-xs sm:text-sm mt-4 text-primary/50">We promise, we won&apos;t spam your mailbox</h2>
     </MaxWidthWrapper>
   );
 }

@@ -17,7 +17,7 @@ function page() {
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Introduction</h2>
             <p className="text-gray-600 dark:text-gray-300">
-              Maurya Tech ("we", "our", or "us") respects your privacy and is committed to protecting your personal data.
+              Maurya Tech (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) respects your privacy and is committed to protecting your personal data.
               This privacy policy will inform you about how we look after your personal data when you visit our website and
               tell you about your privacy rights and how the law protects you.
             </p>

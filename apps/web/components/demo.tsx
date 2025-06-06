@@ -1,6 +1,5 @@
 import { Instrument_Serif } from "next/font/google";
 import { Cover } from "./ui/cover";
-import { ArrowBigDown, ArrowDownNarrowWideIcon } from "lucide-react";
 
 const font = Instrument_Serif({
     subsets:['latin'],

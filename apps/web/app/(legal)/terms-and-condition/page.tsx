@@ -45,7 +45,7 @@ function page() {
 
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Disclaimer</h2>
-            <p className="text-gray-600 dark:text-gray-300">Service is provided "as is", without warranties.</p>
+            <p className="text-gray-600 dark:text-gray-300">Service is provided &quot;as is&quot;, without warranties.</p>
           </section>
 
           <section>

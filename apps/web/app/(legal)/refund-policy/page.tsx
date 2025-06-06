@@ -26,7 +26,7 @@ function page() {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Subscription Refunds</h2>
             <p className="text-gray-600 dark:text-gray-300 mb-2">Refunds for our subscription services are subject to the following conditions:</p>
             <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
-              <li className="mb-1">You may request a full refund within 14 days of your initial purchase if you're not satisfied with our service.</li>
+              <li className="mb-1">You may request a full refund within 14 days of your initial purchase if you&apos;re not satisfied with our service.</li>
               <li className="mb-1">No refunds will be provided after the 14-day period has expired.</li>
               <li className="mb-1">For annual subscriptions, a pro-rated refund may be considered at our discretion if requested within 30 days.</li>
             </ul>

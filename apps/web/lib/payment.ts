@@ -12,7 +12,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
         }
     })
 
-    let currentCredits = user?.credits as number;
+    const currentCredits = user?.credits as number;
 
     switch(product_id){
         case 'pdt_ryPo94ykk7AzQwfFLksnx':

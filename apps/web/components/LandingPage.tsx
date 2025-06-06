@@ -3,12 +3,6 @@ import Marquee from "@/components/Marquee";
 import HeroSection from "@/components/HeroSection";
 import { BentoGridSection } from "./BentoGrid";
 import DemoSection from "./demo";
-import { cn } from "@/lib/utils";
-
-const InstrumentSerifNotItalics = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-});
 
 export default function LandingPage() {
   return (

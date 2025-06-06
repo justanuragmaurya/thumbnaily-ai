@@ -1,17 +1,10 @@
 import Link from 'next/link';
-import { DollarSign, Dot, Image, ImagePlus,MoonIcon,User2 } from 'lucide-react';
-import { Instrument_Serif } from 'next/font/google';
+import { DollarSign, Image, ImagePlus,User2 } from 'lucide-react';
 import { ModeToggle } from './ModeToggle';
 interface AppSidebarProps {
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
-
-const font = Instrument_Serif({
-  subsets:['latin'],
-  weight:"400",
-  style:"italic"
-})
 
 const AppSidebar: React.FC<AppSidebarProps> = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   return (
