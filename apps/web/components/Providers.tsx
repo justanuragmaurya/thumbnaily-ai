@@ -1,3 +1,4 @@
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./theme-provider";
 
 interface ProvidersProps {
@@ -6,6 +7,7 @@ interface ProvidersProps {
 export const Providers: React.FC<ProvidersProps> = ({ children, ...props }) => {
   return (
     <>
+    <SessionProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -14,6 +16,7 @@ export const Providers: React.FC<ProvidersProps> = ({ children, ...props }) => {
       >
         {children}
       </ThemeProvider>
+      </SessionProvider>
     </>
   );
 };

@@ -1,16 +1,16 @@
 "use client";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, ArrowUp, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function GenerationPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[] | []>([]);
-  const [prev,setPrev]=useState([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageBase64 , setBase64]  = useState<string|"">("");
 
@@ -54,6 +54,11 @@ export default function GenerationPage() {
       basicPrompt: inputRef.current.value,
       image_url:imageBase64
     });
+
+    if(response.data.error){
+      const message:string = response.data.message;
+      toast(message);
+    }
 
     if (!response.data.imageURL) {
       console.log(response.data);

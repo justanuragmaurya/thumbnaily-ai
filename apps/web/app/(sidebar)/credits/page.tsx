@@ -1,24 +1,92 @@
-import DodoPayments from "dodopayments";
+"use client"
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import React from "react";
-
-const client = new DodoPayments({
-  bearerToken: process.env.DODO_PAYMENTS_API_KEY,
-});
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { countries } from "@/lib/countries";
+import axios from "axios";
+import { Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 function CreditsPage() {
-  const handleClick = async () => {
+  const [plan, setPlan] = useState<string | undefined>(undefined);
+  const [loading,setLoading] = useState<boolean>(false);
+  const [credits,setCredits] = useState<number>(0);
+  const [cloading,setcLoading] = useState<boolean>(false);
+  const [country,setCountry] = useState<string>("");
+  const router = useRouter();
 
+  const handleClick = async () => {
+    if(!plan){
+      return
+    }
+    setLoading(true);
+    const response = await axios.post("/api/pay",{
+      product_id:plan,
+      country:country
+    });
+    const link = response.data.link;
+    setLoading(true);
+    router.push(link);
   };
+  
+  useEffect(() => {
+    async function fetchCredits() {
+      setcLoading(true);
+      const response = await axios.get("/api/getcredits");
+      const credits = response.data.credits;
+      if(credits){
+        setCredits(credits);
+      }
+      setcLoading(false);
+    }
+    fetchCredits();
+  }, []);
 
   return (
-    <div className="p-10 flex flex-col items-center">
-      <h1>Your Credits:</h1>
-      <h2></h2>
-      <Link href={`"aihdailda"adadasd"asdada"`}>
-        <Button variant={"outline"}>Buy more credits</Button>
-      </Link>
+    <div className="h-screen flex items-center justify-center px-2 bg-background">
+      <div className="border rounded-xl shadow flex flex-col md:flex-row w-full max-w-3xl bg-background overflow-hidden">
+
+        <div className="flex-1 flex flex-col items-center justify-center p-10 border-b md:border-b-0 md:border-r border-border">
+          <h2 className="text-lg text-foreground">Current Credits: </h2>
+          <h1 className="text-5xl font-black m-2 text-foreground">{cloading?"Loading":credits}🔥</h1>
+          <p className="text-primary/50 text-sm text-center">
+            Each thumbnail cost 1 credit🔥 to make !
+          </p>
+        </div>
+        {/* Buy Credits Section */}
+        <div className="flex-1 flex flex-col justify-center p-10">
+          <h1 className="text-xl font-bold mb-4 text-foreground">Buy More credits</h1>
+          <Select value={plan} onValueChange={setPlan}>
+            <SelectTrigger className="w-full mx-auto mb-4">
+              <SelectValue placeholder="Select Amount" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pdt_xkoiOvAKidWVL64bXAqE8">25</SelectItem>
+              <SelectItem value="pdt_jN3KYfZ9aQFxF1BVA1PUJ">50</SelectItem>
+              <SelectItem value="pdt_ryPo94ykk7AzQwfFLksnx">100</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={country} onValueChange={setCountry}>
+            <SelectTrigger className="w-full mx-auto mb-4">
+              <SelectValue placeholder="Select Your Country" />
+            </SelectTrigger>
+            <SelectContent>
+              {countries.sort().map((e,index)=>{
+                return(
+                  <SelectItem key={index} value={e.code}>{e.name}{e.flag}</SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
+          <Button className="w-full" onClick={handleClick}>{loading?<><Loader2Icon className="animate-spin"/>Loading</>:"Buy"}</Button>
+        </div>
+      </div>
     </div>
   );
 }

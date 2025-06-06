@@ -23,8 +23,6 @@ export async function GET(req:NextRequest){
         }
     })
 
-    console.log(thumbnails)
-
     return NextResponse.json({
         thumbnails
     })

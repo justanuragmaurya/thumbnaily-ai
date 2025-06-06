@@ -50,7 +50,7 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
         {/* Desktop Actions */}
         <div className='hidden md:flex gap-2 flex-shrink-0'>
           <ModeToggle/>
-          <Link href="/waitlist">
+          <Link href="/app">
             <button className="flex items-center gap-2 border border-primary/20 px-4 sm:px-6 md:px-8 py-2 rounded-full hover:bg-primary hover:text-secondary transition text-sm">
               Get Started <ArrowRight size={15}/>
             </button>
@@ -67,7 +67,7 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
           
           <div className='flex items-center justify-between pt-3 border-t'>
             <ModeToggle/>
-            <Link href="/waitlist">
+            <Link href="/app">
               <button className="flex items-center gap-2 border border-primary/20 px-4 py-2 rounded-full hover:bg-primary hover:text-secondary transition text-sm">
                 Get Started <ArrowRight size={15}/>
               </button>

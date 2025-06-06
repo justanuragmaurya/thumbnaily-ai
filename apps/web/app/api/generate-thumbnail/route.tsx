@@ -7,21 +7,46 @@ import Replicate from "replicate";
 import { enhancePrompt } from "@/lib/enhancePrompt";
 import { auth } from "@/lib/auth";
 import { error } from "console";
+import { reduceCredit } from "@/lib/credits";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    
-    if(!session){
-        return NextResponse.json({
-            error:true,
-            message:"unauthenticated"
-        })
+
+    if (!session) {
+      return NextResponse.json({
+        error: true,
+        message: "unauthenticated",
+      });
     }
+
+    const user = await db.user.findFirst({
+      where: {
+        email: session.user.email!,
+      },
+    });
+
+      if(!user){
+        return NextResponse.json(
+          {
+            error: true,
+            message: "Can not fint the user",
+          })
+      }
+      if (user.credits <= 0) {
+        return NextResponse.json(
+          {
+            error: true,
+            message: "Insufficient credits , please recharge to continue",
+          }
+        );
+      }
+
+      
 
     const { basicPrompt, image_url } = await req.json();
 
-    console.log("Sending for Prompt")
+    console.log("Sending for Prompt");
     const response = await enhancePrompt(basicPrompt, image_url);
 
     if (!response) {
@@ -31,7 +56,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("Got the prompt Prompt")
+    console.log("Got the prompt Prompt");
 
     const { prompt } = JSON.parse(response);
 
@@ -53,7 +78,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const key = `thumbnails/generations/${Math.floor(Math.random()*1000)+Date.now().toString()}.jpeg`;
+    const key = `thumbnails/generations/${Math.floor(Math.random() * 1000) + Date.now().toString()}.jpeg`;
 
     const cmd = new PutObjectCommand({
       Bucket: "thumbnaily-storage",
@@ -62,8 +87,8 @@ export async function POST(req: NextRequest) {
     });
 
     const url = await getSignedUrl(s3, cmd);
-    
-    console.log("Sending to Replicate")
+
+    console.log("Sending to Replicate");
     const output = (await replicate.run(
       "bytedance/hyper-flux-8step:16084e9731223a4367228928a6cb393b21736da2a0ca6a5a492ce311f0a97143",
       { input }
@@ -77,7 +102,7 @@ export async function POST(req: NextRequest) {
     const imageResponse = await fetch(output[0]);
     const imageBuffer = await imageResponse.arrayBuffer();
 
-    console.log("Sending to s3")
+    console.log("Sending to s3");
     await axios.put(url, imageBuffer, {
       headers: {
         "Content-Type": "image/jpeg",
@@ -88,28 +113,19 @@ export async function POST(req: NextRequest) {
     const imageURL = `https://thumbnaily-storage.s3.ap-south-1.amazonaws.com/${key}`;
 
     console.log("saving to db");
-    
-    const user = await db.user.findFirst({
-        where:{
-            email:session.user.email as string
-        }
-    })
-    
-    if(!user){
-        return NextResponse.json({
-            error:true,
-            message:"user not found"
-        })
-    }
 
     await db.thumbnails.create({
       data: {
-        creatorID:user?.id,
+        creatorID: user?.id,
         link: imageURL,
         prompt: input.prompt,
       },
     });
+    
+    await reduceCredit({email:user.email,cost:1});
+
     console.log("saving to db done");
+    
     return NextResponse.json({ imageURL });
   } catch (e) {
     console.error(e);
