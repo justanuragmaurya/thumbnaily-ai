@@ -5,7 +5,21 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "DATABASE_URL",
+        "ACCESSKEYID", 
+        "SECRETACCESSKEY",
+        "REPLICATE_API_TOKEN",
+        "AUTH_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET", 
+        "OPENAI_API_KEY",
+        "NEXTAUTH_URL",
+        "DODO_PAYMENTS_API_KEY",
+        "DODO_PAYMENTS_WEBHOOK_SECRET",
+        "AUTH_TRUST_HOST"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
