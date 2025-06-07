@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "docker:dev": "npx prisma migrate dev && pnpm dev",
     "docker:prod": "npx prisma migrate dev && pnpm build && pnpm start",
