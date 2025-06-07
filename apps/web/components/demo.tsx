@@ -13,7 +13,7 @@ export default function DemoSection(){
             <div className="aspect-video p-2">
                 <iframe
                     className="w-full h-full rounded-lg"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    src="https://www.youtube.com/embed/oNlLRvfjcbE"
                     title="Product Demo Video"
                     allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerPolicy="strict-origin-when-cross-origin"
