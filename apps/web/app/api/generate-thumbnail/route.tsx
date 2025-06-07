@@ -6,7 +6,6 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Replicate from "replicate";
 import { enhancePrompt } from "@/lib/enhancePrompt";
 import { auth } from "@/lib/auth";
-import { error } from "console";
 import { reduceCredit } from "@/lib/credits";
 
 export async function POST(req: NextRequest) {

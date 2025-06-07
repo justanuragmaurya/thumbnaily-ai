@@ -50,10 +50,15 @@ export async function POST(req:NextRequest){
         bearerToken: process.env.DODO_PAYMENTS_API_KEY,
         environment: 'test_mode'
     })
-
+    if(!process.env.NEXTAUTH_URL){
+        return NextResponse.json({
+            error:true,
+            message:"Invalid URL"
+        })
+    }
     const payment = await client.payments.create({
         payment_link: true,
-        return_url:"http://localhost:3000/credits",
+        return_url:`${process.env.NEXTAUTH_URL}/credits`,
         billing: {
           city: "city",
           country: country,
