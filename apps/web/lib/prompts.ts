@@ -20,4 +20,6 @@ export const systemPrompt = `You are an expert AI assistant trained to generate 
             The Prompt should be plain text without any formatting for .md just plain text.
 
             Also if there is a picture attached , use theat picture as reference to create thumbnail prompt having simlar lighting , structure and conditions form the attacherd image , if the attached image is a sketch then just copy the structure
+            
+            If the title of the video is mentioned by the user then , extract meaninfull pharase form titlte and put that text on thumbnail , also remember to always generate vibrant color thuymbnails.
 `

@@ -11,31 +11,22 @@ export async function enhancePrompt(userPrompt: string, image_url: string="") {
   const ai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
-
-  let content;
-
-  if(!image_url){
-    content = [
-        {
-          type: "text" as const,
-          text: userPrompt,
-        }
-      ];
-    } else {
-        content = [
-            {
-                type: "text" as const,
-                text: userPrompt,
-            },
-            {
-                type: "image_url" as const,
-                image_url: {
-                    url: `${image_url}`
-                }
-            }
-        ]
-    }
   
+  let content: OpenAI.Chat.Completions.ChatCompletionContentPart[];
+  
+  console.log(image_url);
+
+  if (image_url) {
+    content = [
+      { type: "text", text: userPrompt },
+      { type: "image_url", image_url: {url:image_url}},
+    ];
+  } else {
+    content = [
+      { type: "text", text: userPrompt },
+    ];
+  }
+
   const aiPrompt = await ai.chat.completions.create({
     model: "gpt-4o",
     messages: [
