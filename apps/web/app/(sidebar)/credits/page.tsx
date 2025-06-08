@@ -48,6 +48,8 @@ function CreditsPage() {
     fetchCredits();
   }, []);
 
+  const sortedCountries = [...countries].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="h-screen flex items-center justify-center px-2 bg-background">
       <div className="border rounded-xl shadow flex flex-col md:flex-row w-full max-w-3xl bg-background overflow-hidden">
@@ -67,9 +69,9 @@ function CreditsPage() {
               <SelectValue placeholder="Select Amount" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="pdt_xkoiOvAKidWVL64bXAqE8">25</SelectItem>
-              <SelectItem value="pdt_jN3KYfZ9aQFxF1BVA1PUJ">50</SelectItem>
-              <SelectItem value="pdt_ryPo94ykk7AzQwfFLksnx">100</SelectItem>
+              <SelectItem value="pdt_fiZwCeFFCoOk0YB3fNrOH">25</SelectItem>
+              <SelectItem value="pdt_B5VzoGkDoHNqiXk7ySoLQ">50</SelectItem>
+              <SelectItem value="pdt_vNJc6ot0MMBfxSWtg6p2l">100</SelectItem>
             </SelectContent>
           </Select>
           <Select value={country} onValueChange={setCountry}>
@@ -77,7 +79,7 @@ function CreditsPage() {
               <SelectValue placeholder="Select Your Country" />
             </SelectTrigger>
             <SelectContent>
-              {countries.sort().map((e,index)=>{
+              {sortedCountries.map((e,index)=>{
                 return(
                   <SelectItem key={index} value={e.code}>{e.name}{e.flag}</SelectItem>
                 )

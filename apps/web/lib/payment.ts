@@ -15,9 +15,9 @@ export const handlePayments = async(payload:WebhookPayload)=>{
     const currentCredits = user?.credits as number;
 
     switch(product_id){
-        case 'pdt_ryPo94ykk7AzQwfFLksnx':
+        case 'pdt_vNJc6ot0MMBfxSWtg6p2l':
             await db.user.update({
-                where:{
+                where:{ 
                     email:email
                 },
                 data:{
@@ -25,7 +25,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
                 }
             })
             break;
-        case 'pdt_jN3KYfZ9aQFxF1BVA1PUJ':
+        case 'pdt_B5VzoGkDoHNqiXk7ySoLQ':
             await db.user.update({
                 where:{
                     email:email
@@ -35,7 +35,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
                 }
             })
             break;
-        case 'pdt_xkoiOvAKidWVL64bXAqE8':
+        case 'pdt_fiZwCeFFCoOk0YB3fNrOH':
             await db.user.update({
                 where:{
                     email:email
