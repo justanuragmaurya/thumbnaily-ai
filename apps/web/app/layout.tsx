@@ -22,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@codeanuragg" />
         <meta name="twitter:title" content="Thumbnaily" />
