@@ -48,7 +48,7 @@ export async function POST(req:NextRequest){
 
     const client = new DodoPayments({
         bearerToken: process.env.DODO_PAYMENTS_API_KEY,
-        environment: 'test_mode'
+        environment: "live_mode"
     })
     if(!process.env.NEXTAUTH_URL){
         return NextResponse.json({
