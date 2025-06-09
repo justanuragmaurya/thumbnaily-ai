@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { MaxWidthWrapper } from '@/components/MaxWidthWrapper'
 import { Instrument_Serif } from 'next/font/google'
 import { ModeToggle } from './ModeToggle'
-import { ArrowRight, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import GithubStarBtn from './ui/GithubStarBtn'
 
@@ -43,11 +43,6 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
           <div className="hidden md:flex items-center gap-6 flex-shrink-0">
             <ModeToggle />
             <GithubStarBtn />
-            <Link href="/app">
-              <button className="flex cursor-pointer items-center gap-2 px-4 sm:px-6 md:px-8 py-2 border border-primary/20 rounded-full hover:bg-primary hover:text-secondary transition text-sm whitespace-nowrap">
-                Get Started <ArrowRight size={15} />
-              </button>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -70,16 +65,13 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
             <Link href='/contact' className='block py-2 text-sm hover:text-primary/80'>Contact</Link>
             <Link href='/pricing' className='block py-2 text-sm hover:text-primary/80'>Pricing</Link>
 
-            <div className='flex items-center justify-between pt-3 border-t'>
-              <ModeToggle />
-              <Link href="/app">
-                <button className="flex items-center gap-2 border border-primary/20 px-4 py-2 rounded-full hover:bg-primary hover:text-secondary transition text-sm">
-                  Get Started <ArrowRight size={15} />
-                </button>
-              </Link>
-            </div>
-            <div className='flex justify-center'>
-              <GithubStarBtn />
+            <div className='flex justify-between items-center'>
+              <div className='pt-3'>
+                <ModeToggle />
+              </div>
+              <div className='mt-3'>
+                <GithubStarBtn />
+              </div>
             </div>
           </div>
         )}
