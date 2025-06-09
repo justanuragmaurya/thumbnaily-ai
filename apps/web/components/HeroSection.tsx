@@ -45,7 +45,7 @@ export default function HeroSection() {
           needed.
         </h3>
         <Link href={"/app"} className="mt-4 sm:mt-6">
-          <button className="flex items-center gap-2 border border-primary/20 px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full hover:scale-105 hover:bg-primary hover:text-secondary transition text-sm sm:text-base">
+          <button className="flex cursor-pointer items-center gap-2 border border-primary/20 px-6 sm:px-8 md:px-10 py-3 sm:py-4 rounded-full hover:scale-105 hover:bg-primary hover:text-secondary transition text-sm sm:text-base">
             Generate Now{" "}
             <ArrowRight size={15} className="h-3 w-3 sm:h-4 sm:w-4" />
           </button>
