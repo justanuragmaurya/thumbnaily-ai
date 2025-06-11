@@ -6,6 +6,8 @@ import { Menu as MenuIcon, X as XIcon } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function SidebarLayout({
   children,
@@ -44,23 +46,36 @@ export default function SidebarLayout({
   }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <h1 className="text-xl font-bold m-5">Please Sign in to continue</h1>
-      <Button
-        onClick={() => {
-          signIn("google");
-        }}
-      >
-        <Image
-          src={
-            "https://cdn.iconscout.com/icon/free/png-256/free-google-logo-icon-download-in-svg-png-gif-file-formats--brands-pack-logos-icons-189824.png?f=webp&w=256"
-          }
-          height={15}
-          width={15}
-          alt="logo"
-        />
-        Sign in with Google
-      </Button>
+    <div className="min-h-screen flex flex-col">
+      <div>
+        <Navbar />
+      </div>
+
+      <div className="flex-grow flex justify-center items-center flex-col">
+        <h1 className="text-xl font-bold m-5">Please Sign in to continue</h1>
+        <div>
+          <Button
+            className="cursor-pointer"
+            onClick={() => {
+              signIn("google");
+            }}
+          >
+            <Image
+              src={
+                "https://cdn.iconscout.com/icon/free/png-256/free-google-logo-icon-download-in-svg-png-gif-file-formats--brands-pack-logos-icons-189824.png?f=webp&w=256"
+              }
+              height={15}
+              width={15}
+              alt="logo"
+            />
+            Sign in with Google
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 }
