@@ -24,29 +24,31 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
   return (
     <div className="sticky top-0 z-50 backdrop-blur bg-background/70 border-b">
       <MaxWidthWrapper>
-        <div className="flex items-center justify-between px-4 py-4 md:py-5">
+        <div className="flex items-center px-4 py-4 md:py-5">
           {/* Left: Logo */}
-          <Link href="/" className="flex-shrink-0">
-            <div className={`font-bold text-xl md:text-2xl ${InstrumentSerif.className}`}>
-              Thumbnaily
-            </div>
-          </Link>
+          <div className="w-1/4">
+            <Link href="/" className="flex">
+              <div className={`font-bold text-xl md:text-2xl ${InstrumentSerif.className}`}>
+                Thumbnaily
+              </div>
+            </Link>
+          </div>
 
           {/* Center: Navigation Links (Desktop only) */}
-          <div className="hidden md:flex justify-center items-center gap-6 lg:gap-8 flex-1">
+          <div className="hidden md:flex flex-grow justify-center items-center gap-6 lg:gap-8">
             <Link href="/" className="block py-2 text-sm hover:text-primary/80">Home</Link>
             <Link href="/contact" className="block py-2 text-sm hover:text-primary/80">Contact</Link>
             <Link href="/pricing" className="block py-2 text-sm hover:text-primary/80">Pricing</Link>
           </div>
 
           {/* Right: Theme Toggle + Buttons (Desktop only) */}
-          <div className="hidden md:flex items-center gap-6 flex-shrink-0">
+          <div className="hidden md:flex w-1/4 justify-end items-center gap-6 flex-shrink-0">
+            <div className='border rounded-md'><GithubStarBtn /></div>
             <ModeToggle />
-            <GithubStarBtn />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-auto">
             <button
               onClick={onExternalMobileMenuToggle ? onExternalMobileMenuToggle : () => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-md"
