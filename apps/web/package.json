@@ -8,8 +8,6 @@
     "build": "prisma generate --schema=../../packages/db/prisma/schema.prisma && next build",
     "postinstall": "prisma generate --schema=../../packages/db/prisma/schema.prisma",
     "start": "next start",
-    "docker:dev": "npx prisma migrate dev && pnpm dev",
-    "docker:prod": "npx prisma migrate dev && pnpm build && pnpm start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
@@ -24,6 +22,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@repo/db": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@tabler/icons": "^3.34.0",
     "@tailwindcss/postcss": "^4.1.7",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/react": "^3.0.0",

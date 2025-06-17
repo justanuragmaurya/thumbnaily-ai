@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DollarSign, Image, ImagePlus,User2 } from 'lucide-react';
+import { DollarSign, Globe, Image, ImagePlus,User2, WholeWordIcon } from 'lucide-react';
 import { ModeToggle } from './ModeToggle';
 interface AppSidebarProps {
   isMobileMenuOpen: boolean;
@@ -63,6 +63,13 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isMobileMenuOpen, setIsMobileMe
           >
             <Image className="m-1 p-0.5" />
             My Thumbnails
+          </Link>
+          <Link
+            href="/public"
+            className="flex items-center px-3 py-2.5 text-sm font-medium border hover:bg-primary-foreground"
+          >
+            <Globe className="m-1 p-0.5" />
+            All thumbnails
           </Link>
           <Link
             href="/account"
