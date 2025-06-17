@@ -1,7 +1,7 @@
 "use client";
 
 import AppSidebar from "@/components/app-sidebar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu as MenuIcon, X as XIcon } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
