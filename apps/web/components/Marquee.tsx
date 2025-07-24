@@ -50,8 +50,8 @@ export default function Marquee() {
         animate={{ opacity: 100}}
         transition={{delay:0.5 , duration: 1.5 , ease:"easeOut"}}
       >
-        <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-background to-transparent z-10 w-16 sm:w-24 md:w-32 pointer-events-none" />
-        <div className="absolute top-0 bottom-0 right-0 bg-gradient-to-l from-background to-transparent z-10 w-24 sm:w-32 md:w-48 pointer-events-none" />
+        {/* <div className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-background to-transparent z-10 w-16 sm:w-24 md:w-32 pointer-events-none" />
+        <div className="absolute top-0 bottom-0 right-0 bg-gradient-to-l from-background to-transparent z-10 w-24 sm:w-32 md:w-48 pointer-events-none" /> */}
         
         <div className="flex"
              onMouseEnter={() => setIsPaused(true)}

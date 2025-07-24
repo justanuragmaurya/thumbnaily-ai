@@ -22,7 +22,7 @@ function Navbar({ onExternalMobileMenuToggle, isExternalMobileMenuOpen }: Navbar
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="sticky top-0 z-50 backdrop-blur bg-background/70 border-b">
+    <div className="fixed w-full top-0 z-50 backdrop-blur bg-background/70 border-b">
       <MaxWidthWrapper>
         <div className="flex items-center px-4 py-4 md:py-5">
           {/* Left: Logo */}
