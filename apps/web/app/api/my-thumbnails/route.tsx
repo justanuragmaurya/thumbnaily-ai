@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import db from "@repo/db"
 import { auth } from "@/lib/auth";
 
@@ -13,7 +13,7 @@ export async function GET(){
     
     const user = await db.user.findFirst({
         where:{
-            email:session?.user.email!
+            email:session?.user?.email as string
         }
     })
 

@@ -35,7 +35,7 @@ export default function HeroSection() {
         <h3 className="max-w-3xl text-xs md:text-lg text-center text-primary/50 mt-2 sm:mt-3">
           Thumbnaily is open source tool transforms your content with eye-catching thumbnails. Create high-converting thumbnails for videos, and more—no design skills needed.
         </h3>
-        <Link href={"/app"} className="mt-4 sm:mt-6">
+        <Link href={"/app"} className="mt-4 sm:mt-6 z-50">
           <RainbowButton className="flex cursor-pointer items-center gap-2 border border-primary/20 px-4 md:px-10 hover:scale-105 transition text-sm sm:text-base h-8 md:h-12">
             Generate Now
             <ArrowRight size={15} className="h-3 w-3 sm:h-4 sm:w-4" />

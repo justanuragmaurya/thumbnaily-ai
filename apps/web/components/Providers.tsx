@@ -4,7 +4,7 @@ import { ThemeProvider } from "./theme-provider";
 interface ProvidersProps {
   children: React.ReactNode;
 }
-export const Providers: React.FC<ProvidersProps> = ({ children, ...props }) => {
+export const Providers: React.FC<ProvidersProps> = ({ children }) => {
   return (
     <>
     <SessionProvider>

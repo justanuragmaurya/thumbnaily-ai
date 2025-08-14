@@ -27,7 +27,7 @@ export interface WebhookPayload {
       }[];
       payment_link: string;
       tax: number;
-      metadata: {};
+      metadata: Record<string, unknown>;
       error_message: string | null;
       error_code: string | null;
       discount_id: string | null;

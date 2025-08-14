@@ -78,7 +78,7 @@ export default function GenerationPage() {
       }, 1000); // Poll every 1 second (adjust as needed)
  
       return pollInterval; // Not strictly needed to return it here unless managed outside
-    }, [setImages, setLoading, setProgressState, toast]); // Add dependencies
+    }, [setImages, setLoading, setProgressState]); // Remove toast dependency as it's stable
 
   const uploadWithPresignedUrl = async (file: File): Promise<string> => {
     try {
@@ -175,12 +175,12 @@ export default function GenerationPage() {
         setLoading(false);
         setProgressState({ step: "", progress: 0 });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Generation initiation error:", error);
-      toast(
-        error.response?.data?.message ||
-          "Failed to initiate thumbnail generation."
-      );
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to initiate thumbnail generation.";
+      toast(errorMessage);
       setLoading(false);
       setProgressState({ step: "", progress: 0 });
     }

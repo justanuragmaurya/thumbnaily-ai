@@ -20,7 +20,7 @@ export default function ThumbnailDetails() {
       setLoading(false);
     }
     getDetails();
-  }, []);
+  }, [thumbnailid]);
   
     if(loading){
         return(

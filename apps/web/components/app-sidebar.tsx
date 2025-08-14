@@ -157,7 +157,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isMobileMenuOpen, setIsMobileMe
           initial="hidden"
           animate="show"
         >
-          {navItems.map((item, index) => (
+          {navItems.map((item) => (
             <motion.div key={item.href} variants={itemVariants}>
               <Link
                 href={item.href}

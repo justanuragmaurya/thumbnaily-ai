@@ -24,7 +24,6 @@ const authConfig = {
   ],
   callbacks: {
     async signIn({
-      user,
       account,
       profile,
     }: {
@@ -37,7 +36,9 @@ const authConfig = {
         if (!email) {
           throw new Error("No profile email found.");
         }
-        const avatarUrl = profile?.image ?? (profile as any)?.picture ?? null;
+        const pictureValue = (profile as Record<string, unknown>)?.picture;
+        const imageValue = profile?.image;
+        const avatarUrl: string | null = (typeof imageValue === 'string' ? imageValue : null) ?? (typeof pictureValue === 'string' ? pictureValue : null);
         const name = profile?.name ?? email;
 
         await db.user.upsert({

@@ -1,11 +1,6 @@
 "use client"
-import { Instrument_Serif } from "next/font/google";
 import { Cover } from "./ui/cover";
 import { motion } from "motion/react"
-const font = Instrument_Serif({
-    subsets:['latin'],
-    weight:"400"
-})
 
 export default function DemoSection(){
     return (

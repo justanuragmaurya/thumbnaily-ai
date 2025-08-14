@@ -45,7 +45,7 @@ export default function Marquee() {
   return (
     <MaxWidthWrapper>
       <motion.div
-        className="overflow-hidden relative"
+        className="overflow-hidden relative z-50"
         initial={{ opacity: 0}}
         animate={{ opacity: 100}}
         transition={{delay:0.5 , duration: 1.5 , ease:"easeOut"}}

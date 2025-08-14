@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
         await reduceCredit({ email: user.email!, cost: 1 });
         updateProgress(progressId, "Complete", 100, finalImageUrl);
         console.log("Saving to DB done");
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error("Background generation error:", e);
         const errorMessage =
           e instanceof Error ? e.message : "Unknown error during generation";
@@ -197,7 +197,7 @@ export async function POST(req: NextRequest) {
     })(); // Self-invoking async function
 
     return NextResponse.json({ progressId }); // Return progressId immediately
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Catch errors from initial synchronous part
     console.error("Initial request processing error:", e);
     const errorMessage =
