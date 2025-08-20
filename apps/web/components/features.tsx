@@ -49,7 +49,7 @@ export default function FeatureSection() {
   ];
   return (
     <MaxWidthWrapper className="py-24 flex flex-col justify-center items-center">
-      <h1 className="text-xl md:text-3xl font-bold flex items-center gap-2 bg-gradient-to-b from-primary to-[#7a7a7a] bg-clip-text text-transparent mx-auto">
+      <h1 className="text-xl md:text-4xl font-bold flex items-center gap-2 bg-gradient-to-b from-primary to-[#7a7a7a] bg-clip-text text-transparent mx-auto">
         Features
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-5 ">
@@ -60,8 +60,19 @@ export default function FeatureSection() {
             transition={{ duration: 0.3, delay: index * 0.15 }}
             viewport={{ once: true, margin: "-250px" }}
             key={index}
-            className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-shadow"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="relative rounded-2xl p-[2px] bg-gradient-to-r from-primary via-purple-500 to-primary"
           >
+           <motion.div
+           initial={{ opacity: 0 }}
+           whileHover={{ opacity: 1 }}
+           animate={{ opacity: [0.6, 1, 0.6] }}
+           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+           className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary via-purple-500 to-primary blur-md opacity-0"
+           />
+
+           <div className="relative bg-card border border-border rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30">
             <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
               <feature.icon className="h-6 w-6 text-primary" />
             </div>
@@ -69,6 +80,7 @@ export default function FeatureSection() {
               {feature.title}
             </h3>
             <p className="text-muted-foreground">{feature.description}</p>
+           </div>
           </motion.div>
         ))}
       </div>
