@@ -50,25 +50,6 @@
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
-![GSSoC Logo](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/apps/web/public/gssoc%20logo.png)
-
-🌟 **Exciting News...**
-
-🚀 This project is now an official part of GirlScript Summer of Code – GSSoC'25! 💃🎉💻 We're thrilled to welcome contributors from all over India and beyond to collaborate, build, and grow *thumbnaily-ai!* Let’s make learning and career development smarter – together! 🌟👨‍💻👩‍💻
-
-👩‍💻 GSSoC is one of India’s **largest 3-month-long open-source programs** that encourages developers of all levels to contribute to real-world projects 🌍 while learning, collaborating, and growing together. 🌱
-
-🌈 With **mentorship, community support**, and **collaborative coding**, it's the perfect platform for developers to:
-
-- ✨ Improve their skills
-- 🤝 Contribute to impactful projects
-- 🏆 Get recognized for their work
-- 📜 Receive certificates and swag!
-
-🎉 **I can’t wait to welcome new contributors** from GSSoC 2025 to this thumbnaily-ai project family! Let's build, learn, and grow together — one commit at a time. 🔥👨‍💻👩‍💻
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-
 **Using this example**
 
 Run the following command:
@@ -252,17 +233,6 @@ This project is licensed under the MIT License - see the [`License`](https://git
     <img src="https://reporoster.com/forks/justanuragmaurya/thumbnaily-ai?type=svg&limit=100&names=false" alt="Forkers" />
   </a>
 </div>
-
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-
-<h2 align="center">🧑‍💻Project Admin:</h2>
-<table>
-<tr>
-<td align="center">
-<a href="https://github.com/justanuragmaurya"><img src="https://avatars.githubusercontent.com/u/143787059?v=4" height="140px" width="140px" alt="Anurag Maurya"></a><br><sub><b>Anurag Maurya</b><br><a href="https://www.linkedin.com/in/realanuragmaurya/"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/73993775/278833250-adb040ea-e3ef-446e-bcd4-3e8d7d4c0176.png" width="45px" height="45px"></a></sub>
-</td>
-</tr>
-</table>
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
