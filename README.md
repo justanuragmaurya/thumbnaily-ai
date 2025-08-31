@@ -2,14 +2,12 @@
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
-<p align="center">
 ![GSSoC'25](https://img.shields.io/badge/GSSoC'25-Selected-orange?style=for-the-badge)
 ![GSSoC-OpenSource](https://img.shields.io/badge/Open%20Source%20Program-GSSoC-orange?style=for-the-badge&logo=opensourceinitiative)
 ![Built with Love](https://img.shields.io/badge/Built%20with-%E2%9D%A4-red?style=for-the-badge)
- <a href="https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" /></a>
+<a href="https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" /></a>
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge&logo=git)
- <a href="https://github.com/justanuragmaurya/thumbnaily-ai"><img src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge" /></a>
- </p>
+<a href="https://github.com/justanuragmaurya/thumbnaily-ai"><img src="https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge" /></a>
  
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
 
