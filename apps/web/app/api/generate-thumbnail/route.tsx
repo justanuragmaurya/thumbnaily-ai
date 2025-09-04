@@ -4,13 +4,12 @@ import axios from "axios";
 import db from "@repo/db";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import Replicate from "replicate";
 import { enhancePrompt } from "@/lib/enhancePrompt";
 import { auth } from "@/lib/auth";
 import { reduceCredit } from "@/lib/credits";
+import { fal } from "@fal-ai/client";
 
-// Store for progress tracking (in production, use Redis or similar)
-// At the top of your route.tsx
+
 interface ProgressData {
   step: string;
   progress: number;
@@ -27,7 +26,7 @@ const updateProgress = (
 ) => {
   progressStore.set(progressId, { step, progress, imageUrl, error });
 };
-// Inside route.tsx
+
 export async function POST(req: NextRequest) {
   const progressId = Math.random().toString(36).substring(7);
   updateProgress(progressId, "Initializing", 0); // Initial state
@@ -89,7 +88,6 @@ export async function POST(req: NextRequest) {
 
     updateProgress(progressId, "Request accepted", 15);
 
-    // Asynchronous generation process
     (async () => {
       try {
         updateProgress(progressId, "Enhancing prompt", 25);
@@ -117,9 +115,6 @@ export async function POST(req: NextRequest) {
         };
 
         updateProgress(progressId, "Initializing AI generation", 45);
-        const replicate = new Replicate({
-          auth: process.env.REPLICATE_API_TOKEN,
-        });
 
         if (!process.env.ACCESSKEYID || !process.env.SECRETACCESSKEY) {
           console.error("AWS credentials missing from environment variables.");
@@ -128,6 +123,10 @@ export async function POST(req: NextRequest) {
           );
         }
 
+        fal.config({
+          credentials: process.env.FAL_API_KEY
+        });
+
         const s3 = new S3Client({
           region: "ap-south-1",
           credentials: {
@@ -135,7 +134,9 @@ export async function POST(req: NextRequest) {
             secretAccessKey: process.env.SECRETACCESSKEY!,
           },
         });
+        
         const key = `thumbnails/generations/${Math.floor(Math.random() * 1000) + Date.now().toString()}.jpeg`;
+        
         const cmd = new PutObjectCommand({
           Bucket: "thumbnaily-storage",
           Key: key,
@@ -146,18 +147,24 @@ export async function POST(req: NextRequest) {
 
         updateProgress(progressId, "Generating thumbnail with AI", 60);
         console.log("Sending to Replicate");
-        const replicateOutput = (await replicate.run(
-          "bytedance/hyper-flux-8step:16084e9731223a4367228928a6cb393b21736da2a0ca6a5a492ce311f0a97143",
-          { input }
-        )) as string[];
-        if (!replicateOutput || !replicateOutput[0]) {
+        
+        const response = await fal.subscribe("fal-ai/flux/dev", {
+          input: {
+            prompt: enhancedContent,
+            output_format: "png",
+            num_inference_steps:50,
+            image_size:{"width":1920,"height":1080}
+            },
+        });
+        
+        if(!response || !response.data?.images?.[0]?.url){
           throw new Error("AI generation failed or returned no output URL");
-        }
+        }  
         updateProgress(progressId, "AI generation complete", 75);
-        console.log("Got from Replicate");
 
         updateProgress(progressId, "Downloading generated image", 80);
-        const imageResponse = await fetch(replicateOutput[0]);
+        
+        const imageResponse = await fetch(response.data.images[0].url);
         if (!imageResponse.ok)
           throw new Error(
             `Failed to download generated image: ${imageResponse.statusText}`

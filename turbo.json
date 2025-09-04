@@ -18,7 +18,8 @@
         "NEXTAUTH_URL",
         "DODO_PAYMENTS_API_KEY",
         "DODO_PAYMENTS_WEBHOOK_SECRET",
-        "AUTH_TRUST_HOST"
+        "AUTH_TRUST_HOST",
+        "FAL_API_KEY"
       ]
     },
     "lint": {
