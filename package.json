@@ -8,7 +8,8 @@
     "web:start":"cd ./apps/web && pnpm start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "setup-env": "cp .env.example .env"
+    "setup-env": "cp .env.example .env",
+    "build:web": "docker build -t thumbnaily-ai/web:latest ."
   },
   "devDependencies": {
     "prettier": "^3.5.3",
