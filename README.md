@@ -1,84 +1,84 @@
-# Turborepo starter
+# 🎨 Thumbnaily-AI 🎨
 
-This Turborepo starter is maintained by the Turborepo core team.
+Stunning, AI-powered thumbnails in seconds. No design skills needed.
 
-## Using this example
+[**View Demo »**](https://thumbnaily.in/) · [Report Bug](https://github.com/justanuragmaurya/thumbnaily-ai/issues) · [Request Feature](https://github.com/justanuragmaurya/thumbnaily-ai/issues)
 
-Run the following command:
+---
+### Badges & Project Stats
 
-```sh
-npx create-turbo@latest
-```
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=for-the-badge&logo=git)](https://github.com/justanuragmaurya/thumbnaily-ai/pulls)
 
-## What's inside?
+| 🌟 Stars | 🍴 Forks | 🐛 Issues | 🔔 Open PRs | 🔕 Closed PRs | 👥 Contributors |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| [![GitHub stars](https://img.shields.io/github/stars/justanuragmaurya/thumbnaily-ai?style=flat&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/stargazers) | [![GitHub forks](https://img.shields.io/github/forks/justanuragmaurya/thumbnaily-ai?style=flat&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/network/members) | [![GitHub issues](https://img.shields.io/github/issues/justanuragmaurya/thumbnaily-ai?style=flat&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/issues) | [![GitHub pull requests](https://img.shields.io/github/issues-pr/justanuragmaurya/thumbnaily-ai?style=flat&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/pulls) | [![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/justanuragmaurya/thumbnaily-ai?style=flat&color=critical&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/pulls?q=is%3Apr+is%3Aclosed) | [![GitHub contributors](https://img.shields.io/github/contributors/justanuragmaurya/thumbnaily-ai?style=flat&color=blue&logo=github)](https://github.com/justanuragmaurya/thumbnaily-ai/graphs/contributors) |
 
-This Turborepo includes the following packages/apps:
+---
+## 👋 About The Project
 
-### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+**Thumbnaily-AI** is an open-source tool designed to empower content creators by automating the creation of high-quality, clickable YouTube thumbnails. Gone are the days of spending hours in complex design software. With Thumbnaily, you can transform a simple text idea into a visually stunning, cinematic thumbnail in mere seconds.
 
-### Utilities
+Our mission is to help creators focus on what they do best—creating amazing content—while we handle the art of first impressions.
 
-This Turborepo has some additional tools already setup for you:
+---
+## ✨ Features
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+* **🤖 AI-Powered Generation**: Simply describe your video, and our AI will generate a compelling thumbnail that grabs attention.
+* **🎨 Cinematic Quality**: Produces thumbnails with dramatic lighting, intense emotion, and symbolic elements inspired by top-performing content.
+* **🖼️ Reference Image Upload**: Have a specific vision? Upload a reference image to guide the AI on style, composition, and mood.
+* **👤 User Accounts & Gallery**: Sign in with your Google account to save and manage all your generated thumbnails in a personal gallery.
+* **🌍 Public Showcase**: Explore a public feed of creations from the community to get inspired for your next thumbnail.
+* **💳 Simple Credit System**: A straightforward, pay-as-you-go credit system for generating thumbnails. Get free credits upon signing up!
 
-### Build
+---
+## 🛠️ Tech Stack
 
-To build all apps and packages, run the following command:
+This project is built with a modern, scalable tech stack, perfect for developers looking to contribute to a cutting-edge AI application.
 
-```
-cd my-turborepo
-pnpm build
-```
+* **Framework**: [Next.js](https://nextjs.org/) (App Router)
+* **Monorepo**: [Turborepo](https://turbo.build/)
+* **Language**: [TypeScript](https://www.typescriptlang.org/)
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/), [Shadcn/ui](https://ui.shadcn.com/), [MagicUI](https://magicui.design/)
+* **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma ORM](https://www.prisma.io/)
+* **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+* **AI Models**: [OpenAI](https://openai.com/) (Prompt Enhancement) & [Replicate](https://replicate.com/) (Image Generation)
+* **File Storage**: [AWS S3](https://aws.amazon.com/s3/)
+* **Payments**: Dodo Payments
 
-### Develop
+---
+## 🤝 Contributing
 
-To develop all apps and packages, run the following command:
+We love contributions from the community! Whether it's reporting a bug, proposing a feature, or submitting a pull request, your help is greatly appreciated.
 
-```
-cd my-turborepo
-pnpm dev
-```
+To get started, please read our **[Contribution Guidelines](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/CONTRIBUTING.md)**.
 
-### Remote Caching
+We expect all contributors to adhere to our **[Code of Conduct](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/CODE_OF_CONDUCT.md)** to ensure a welcoming and inclusive environment.
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+### Our Amazing Contributors
+[![Contributors](https://contrib.rocks/image?repo=justanuragmaurya/thumbnaily-ai)](https://github.com/justanuragmaurya/thumbnaily-ai/graphs/contributors)
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+---
+## 📜 License
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+This project is licensed under the MIT License. See the [`LICENSE`](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/LICENSE) file for more details.
 
-```
-cd my-turborepo
-npx turbo login
-```
+---
+## ⭐ Show Your Support
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+If you find Thumbnaily-AI helpful or interesting, please consider giving it a star on GitHub! Your support helps motivate us to continue developing and improving the project.
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Show some ❤️ by starring this awesome repository!
 
-```
-npx turbo link
-```
+### Stargazers
+[![Stargazers](https://reporoster.com/stars/justanuragmaurya/thumbnaily-ai?type=svg&limit=100&names=false)](https://github.com/justanuragmaurya/thumbnaily-ai/stargazers)
 
-## Useful Links
+---
+## 📬 Contact
 
-Learn more about the power of Turborepo:
+**Anurag Maurya** - [@codeanuragg](https://twitter.com/codeanuragg) - [LinkedIn](https://www.linkedin.com/in/realanuragmaurya/)
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+Project Link: [https://github.com/justanuragmaurya/thumbnaily-ai](https://github.com/justanuragmaurya/thumbnaily-ai)
+
+[⬆️ Back to Top](#-thumbnaily-ai-)
