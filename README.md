@@ -50,6 +50,20 @@ This project is built with a modern, scalable tech stack, perfect for developers
 ---
 ## 🤝 Contributing
 
+### Setup
+
+Copy env vars 
+```bash
+pnpm setup-env
+```
+Ensure you have Docker installed in your system<br>
+Start the application
+```bash
+docker-compose -f docker-compose.dev.yml up
+```
+
+App is running at `http://localhost:3000`
+
 We love contributions from the community! Whether it's reporting a bug, proposing a feature, or submitting a pull request, your help is greatly appreciated.
 
 To get started, please read our **[Contribution Guidelines](https://github.com/justanuragmaurya/thumbnaily-ai/blob/main/CONTRIBUTING.md)**.

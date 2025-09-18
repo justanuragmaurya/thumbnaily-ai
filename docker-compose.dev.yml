@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    image: thumbnaily-ai/web:latest
+    build:
+      context: ./
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

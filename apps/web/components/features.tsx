@@ -60,27 +60,26 @@ export default function FeatureSection() {
             transition={{ duration: 0.3, delay: index * 0.15 }}
             viewport={{ once: true, margin: "-250px" }}
             key={index}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            whileHover={{ scale: 1.05, transition: { type: "spring", stiffness: 300 } }}
             className="relative rounded-2xl p-[2px] bg-gradient-to-r from-primary via-purple-500 to-primary"
           >
-           <motion.div
-           initial={{ opacity: 0 }}
-           whileHover={{ opacity: 1 }}
-           animate={{ opacity: [0.6, 1, 0.6] }}
-           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-           className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary via-purple-500 to-primary blur-md opacity-0"
-           />
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              animate={{ opacity: [0.6, 1, 0.6] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary via-purple-500 to-primary blur-md opacity-0"
+            />
 
-           <div className="relative bg-card border border-border rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30">
-            <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-              <feature.icon className="h-6 w-6 text-primary" />
+            <div className="relative bg-card border border-border rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30">
+              <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                <feature.icon className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground">{feature.description}</p>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              {feature.title}
-            </h3>
-            <p className="text-muted-foreground">{feature.description}</p>
-           </div>
           </motion.div>
         ))}
       </div>
