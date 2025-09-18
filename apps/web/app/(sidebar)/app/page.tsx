@@ -9,8 +9,8 @@ import { toast } from "sonner";
 interface ProgressState {
   step: string;
   progress: number;
-  imageUrl?: string; // To store the final image URL
-  error?: string;    // To store any error messages
+  imageUrl?: string;
+  error?: string;
 }
 
 export default function GenerationPage() {
@@ -26,46 +26,36 @@ export default function GenerationPage() {
     progress: 0,
   });
 
-  // Poll progress function
-     // Inside GenerationPage component
      const pollProgress = useCallback(async (progressId: string) => {
       const pollInterval = setInterval(async () => {
         try {
           const response = await fetch(`/api/generate-thumbnail?progressId=${progressId}`);
           if (!response.ok) {
-            // Handle non-2xx responses from polling if necessary, e.g. 404 if progressId expires
+
             if (response.status === 404) {
               toast("Session expired or progress ID is invalid.");
               clearInterval(pollInterval);
               setLoading(false);
               setProgressState({ step: "Error", progress: 100, error: "Polling failed: Invalid ID" });
             }
-            // Potentially throw to be caught by catch block
+
             throw new Error(`Polling failed with status: ${response.status}`);
           }
           
           const progressData = await response.json() as ProgressState;
-          setProgressState(progressData); // Update UI with current step and progress
+          setProgressState(progressData);
  
-          if (progressData.imageUrl) { // Success
+          if (progressData.imageUrl) {
             setImages((prev) => [...prev, progressData.imageUrl!]);
             toast("Thumbnail generated successfully!");
             clearInterval(pollInterval);
             setLoading(false);
-            // Optionally reset progressState after a delay or keep "Complete"
-            // setProgressState({ step: "Complete!", progress: 100 }); 
-          } else if (progressData.error) { // Error reported by backend
+
+          } else if (progressData.error) {
             toast(`Error: ${progressData.error}`);
             clearInterval(pollInterval);
             setLoading(false);
-            // setProgressState({ step: `Error: ${progressData.error}`, progress: 100 });
-          } else if (progressData.progress >= 100) {
-             // If progress is 100 but no imageUrl or error, it might be an intermediate "Complete" state
-             // or the final state hasn't propagated fully.
-             // If the backend guarantees imageUrl/error with 100% for final states, this branch might not be strictly needed.
-             // However, to be safe, if it's 100% and not yet final, keep polling for a bit or handle.
-             // For now, we assume imageUrl or error will arrive with or soon after 100%.
-             // If after a few more polls at 100% nothing changes, then stop.
+            
           }
  
         } catch (error) {
@@ -75,10 +65,10 @@ export default function GenerationPage() {
           setLoading(false);
           setProgressState({ step: "Polling Error", progress: 100, error: "Could not retrieve progress" });
         }
-      }, 1000); // Poll every 1 second (adjust as needed)
+      }, 1000); 
  
-      return pollInterval; // Not strictly needed to return it here unless managed outside
-    }, [setImages, setLoading, setProgressState]); // Remove toast dependency as it's stable
+      return pollInterval; 
+    }, [setImages, setLoading, setProgressState]);
 
   const uploadWithPresignedUrl = async (file: File): Promise<string> => {
     try {
@@ -92,7 +82,6 @@ export default function GenerationPage() {
         file.size
       );
 
-      // Get presigned URL from API
       const response = await fetch("/api/presigned-url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -149,10 +138,9 @@ export default function GenerationPage() {
     fileInputRef.current?.click();
   };
 
-  // Inside GenerationPage component
   async function handleClick() {
     setLoading(true);
-    setProgressState({ step: "Initializing...", progress: 0 }); // Initial visual feedback
+    setProgressState({ step: "Initializing...", progress: 0 });
 
     if (!inputRef.current?.value) {
       toast("Please enter a prompt.");
@@ -164,27 +152,46 @@ export default function GenerationPage() {
     try {
       const response = await axios.post("/api/generate-thumbnail", {
         basicPrompt: inputRef.current.value,
-        image_url: imageLink, // Ensure imageLink is the string URL or ""
+        image_url: imageLink,
       });
 
       if (response.data.progressId) {
         pollProgress(response.data.progressId);
       } else if (response.data.error) {
-        // Handle immediate errors from POST if any
         toast(response.data.message || "Failed to start generation.");
         setLoading(false);
         setProgressState({ step: "", progress: 0 });
       }
     } catch (error: unknown) {
       console.error("Generation initiation error:", error);
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to initiate thumbnail generation.";
-      toast(errorMessage);
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string, error?: boolean }, status?: number } };
+        const apiMessage = axiosError.response?.data?.message;
+        
+        if (apiMessage) {
+          toast(apiMessage);
+        } else {
+          const status = axiosError.response?.status;
+          if (status === 401) {
+            toast("Please sign in to generate thumbnails.");
+          } else if (status === 402) {
+            toast("Insufficient credits, please recharge.");
+          } else if (status === 404) {
+            toast("User not found. Please try signing in again.");
+          } else {
+            toast("Failed to start thumbnail generation.");
+          }
+        }
+      } else if (error instanceof Error) {
+        toast(error.message);
+      } else {
+        toast("Failed to initiate thumbnail generation.");
+      }
+      
       setLoading(false);
       setProgressState({ step: "", progress: 0 });
     }
-    // No setLoading(false) in a finally block here
   }
 
   return (
@@ -246,7 +253,6 @@ export default function GenerationPage() {
               </div>
             </div>
 
-            {/* Progress Bar */}
             {loading && progressState.step && (
               <div className="max-w-2xl w-full mx-auto mt-4 p-4 bg-background border rounded-md">
                 <div className="flex items-center justify-between mb-2">
