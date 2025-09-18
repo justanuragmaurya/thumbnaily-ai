@@ -6,7 +6,6 @@ import { BentoGridSection } from "./BentoGrid";
 import DemoSection from "./demo";
 import { StarsBackground } from "./ui/star-background";
 import { ShootingStars } from "./ui/shooting-star";
-import FeatureSection from "./features";
 
 export default function LandingPage() {
   const gradient = [
@@ -40,9 +39,6 @@ export default function LandingPage() {
         <StarsBackground/>
         <ShootingStars/>
       </motion.div>
-      <section>
-        <FeatureSection/>
-      </section>
       <section className="py-12">
         <DemoSection />
       </section>
