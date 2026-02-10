@@ -148,12 +148,14 @@ export async function POST(req: NextRequest) {
         updateProgress(progressId, "Generating thumbnail with AI", 60);
         console.log("Sending to Replicate");
         
-        const response = await fal.subscribe("fal-ai/flux/dev", {
+        const response = await fal.subscribe("fal-ai/nano-banana-pro", {
           input: {
             prompt: enhancedContent,
+            num_images: 1,
+            aspect_ratio: "16:9",
             output_format: "png",
-            num_inference_steps:50,
-            image_size:{"width":1920,"height":1080}
+            safety_toleranc: "4",
+            resolution: "1K"
             },
         });
         

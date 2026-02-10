@@ -9,6 +9,7 @@ export async function enhancePrompt(userPrompt: string, image_url: string="") {
   });
   
   const ai = new OpenAI({
+    baseURL:"https://openrouter.ai/api/v1",
     apiKey: process.env.OPENAI_API_KEY,
   });
   
@@ -28,7 +29,7 @@ export async function enhancePrompt(userPrompt: string, image_url: string="") {
   }
 
   const aiPrompt = await ai.chat.completions.create({
-    model: "gpt-4o",
+    model: "google/gemini-3-flash-preview",
     messages: [
       {
         role: "system",
