@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "sonner";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
+import { Analytics } from "@vercel/analytics/next"
 
-const poppins = Poppins({
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Thumbnaily",
-  description: "Stunning thumbnails in seconds",
+  title: "Thumbnaily — AI Thumbnail Generator",
+  description:
+    "Generate scroll-stopping thumbnails in seconds with AI. No design skills needed.",
 };
 
 export default function RootLayout({
@@ -26,21 +28,22 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@codeanuragg" />
-        <meta name="twitter:title" content="Thumbnaily" />
+        <meta name="twitter:title" content="Thumbnaily — AI Thumbnail Generator" />
         <meta
           name="twitter:description"
-          content="Ai thumbnaily generator."
+          content="Generate scroll-stopping thumbnails in seconds with AI."
         />
         <meta
           name="twitter:image"
           content="https://thumbnaily-storage.s3.ap-south-1.amazonaws.com/thumbnails/assests/Screenshot+2025-06-07+at+17.36.39.png"
         />
       </head>
-      <body className={`${poppins.className} antialiased`}>
-        <NextTopLoader />
+      <body className={`${outfit.className} antialiased`}>
+        <NextTopLoader color="#DC2626" />
         <Providers>
           {children}
           <Toaster />
+          <Analytics/>
         </Providers>
       </body>
     </html>

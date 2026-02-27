@@ -1,42 +1,81 @@
-import { Instrument_Serif } from "next/font/google";
+import { Sora } from "next/font/google";
 import { MaxWidthWrapper } from "./MaxWidthWrapper";
 import Link from "next/link";
 
-const font = Instrument_Serif({
-   subsets: ['latin'],
-   weight:"400"
-})
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["700"],
+});
 
-export default function Footer(){
-    return(
-        <div className="border-t mt-10 sm:mt-16">
-        <MaxWidthWrapper>
-            <div className="w-full py-6 sm:py-10 md:py-15 flex flex-col sm:flex-row gap-6 sm:gap-0 items-center sm:items-start sm:justify-between text-primary/70">
-                {/* Logo and tagline */}
-                <div className="text-center sm:text-left">
-                    <h1 className={`text-3xl sm:text-4xl md:text-5xl text-primary ${font.className}`}>Thumbnaily</h1>
-                    <h2 className="text-xs sm:text-sm text-primary/70 mt-1">Stunning Thumbnails in Seconds.</h2>
-               </div>
-               
-                {/* Links */}
-                <div className="flex flex-col gap-2 sm:gap-3 items-center sm:items-end text-sm md:text-md">
-                    <Link href={"/privacy-policy"} className="hover:underline">
-                        <h2>Privacy Policy</h2>
-                    </Link>
-                    <Link href={"/terms-and-condition"} className="hover:underline">
-                        <h2>Terms And Condition</h2>
-                    </Link>
-                    {/* <Link href={"/refund-policy"} className="hover:underline">
-                        <h2>Refund Policy</h2>
-                    </Link> */}
-                </div>
+export default function Footer() {
+  return (
+    <footer className="border-t border-border/50">
+      <MaxWidthWrapper>
+        <div className="px-4 py-12 md:py-16">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            <div>
+              <Link href="/" className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-600 inline-block" />
+                <span className={`text-lg tracking-tight ${sora.className}`}>
+                  thumbnaily
+                </span>
+              </Link>
+              <p className="text-sm text-muted-foreground mt-3 max-w-xs">
+                AI-powered thumbnail generation for creators who'd rather make
+                content than design graphics.
+              </p>
             </div>
-            
-            {/* Copyright */}
-            <div className="text-center text-xs text-primary/50 pb-4 sm:pb-6">
-                © {new Date().getFullYear()} Thumbnaily. All rights reserved.
+
+            <div className="flex gap-12 text-sm">
+              <div className="flex flex-col gap-3">
+                <span className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground/60">
+                  Product
+                </span>
+                <Link
+                  href="/app"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Generator
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="/contact"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Contact
+                </Link>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <span className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground/60">
+                  Legal
+                </span>
+                <Link
+                  href="/privacy-policy"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms-and-condition"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </div>
             </div>
-        </MaxWidthWrapper>
+          </div>
+
+          <div className="mt-12 pt-6 border-t border-border/50 text-xs text-muted-foreground/50">
+            &copy; {new Date().getFullYear()} Thumbnaily. All rights reserved.
+          </div>
         </div>
-    )
+      </MaxWidthWrapper>
+    </footer>
+  );
 }
