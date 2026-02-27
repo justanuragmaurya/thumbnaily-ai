@@ -173,3 +173,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+.marquee-track {
+  display: flex;
+  animation: marquee 60s linear infinite;
+  width: max-content;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
