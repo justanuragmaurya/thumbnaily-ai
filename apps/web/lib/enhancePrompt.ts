@@ -3,30 +3,27 @@ import { systemPrompt } from "./prompts";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
-export async function enhancePrompt(userPrompt: string, image_url: string="") {
+export async function enhancePrompt(
+  userPrompt: string,
+  image_urls: string[] = []
+) {
   const prompt = z.object({
     prompt: z.string(),
   });
-  
+
   const ai = new OpenAI({
-    baseURL:"https://openrouter.ai/api/v1",
+    baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.OPENAI_API_KEY,
   });
-  
-  let content: OpenAI.Chat.Completions.ChatCompletionContentPart[];
-  
-  console.log(image_url);
 
-  if (image_url) {
-    content = [
-      { type: "text", text: userPrompt },
-      { type: "image_url", image_url: {url:image_url}},
-    ];
-  } else {
-    content = [
-      { type: "text", text: userPrompt },
-    ];
-  }
+  const validImageUrls = image_urls.filter(Boolean);
+  const content: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [
+    { type: "text", text: userPrompt },
+    ...validImageUrls.map((url) => ({
+      type: "image_url" as const,
+      image_url: { url },
+    })),
+  ];
 
   const aiPrompt = await ai.chat.completions.create({
     model: "google/gemini-3-flash-preview",

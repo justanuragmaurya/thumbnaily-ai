@@ -29,6 +29,7 @@ model Thumbnails{
   id String @id @default(cuid())
   prompt String
   link String
+  isPublic Boolean @default(true)
   createdAt DateTime @default(now())
   creatorID String
   creator User @relation(fields: [creatorID], references: [id])

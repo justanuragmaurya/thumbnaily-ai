@@ -9,14 +9,15 @@ import { auth } from "@/lib/auth";
 import { reduceCredit } from "@/lib/credits";
 import { fal } from "@fal-ai/client";
 
-
 interface ProgressData {
   step: string;
   progress: number;
   imageUrl?: string;
   error?: string;
 }
+
 const progressStore = new Map<string, ProgressData>();
+
 const getR2Config = () => {
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -37,10 +38,7 @@ const getR2Config = () => {
       region: "auto",
       endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
       forcePathStyle: true,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
+      credentials: { accessKeyId, secretAccessKey },
     }),
   };
 };
@@ -57,19 +55,13 @@ const updateProgress = (
 
 export async function POST(req: NextRequest) {
   const progressId = Math.random().toString(36).substring(7);
-  updateProgress(progressId, "Initializing", 0); // Initial state
+  updateProgress(progressId, "Initializing", 0);
 
   try {
     updateProgress(progressId, "Authenticating user", 5);
     const session = await auth();
     if (!session || !session.user?.email) {
-      updateProgress(
-        progressId,
-        "Error",
-        0,
-        undefined,
-        "Authentication failed"
-      );
+      updateProgress(progressId, "Error", 0, undefined, "Authentication failed");
       return NextResponse.json(
         { error: true, message: "Not authenticated", progressId },
         { status: 401 }
@@ -88,24 +80,31 @@ export async function POST(req: NextRequest) {
       );
     }
     if (user.credits <= 0) {
-      updateProgress(
-        progressId,
-        "Error",
-        10,
-        undefined,
-        "Insufficient credits"
-      );
+      updateProgress(progressId, "Error", 10, undefined, "Insufficient credits");
       return NextResponse.json(
-        {
-          error: true,
-          message: "Insufficient credits, please recharge",
-          progressId,
-        },
+        { error: true, message: "Insufficient credits, please recharge", progressId },
         { status: 402 }
       );
     }
 
-    const { basicPrompt, image_url } = await req.json();
+    const { basicPrompt, image_url, image_urls, isPublic } = await req.json();
+    const publicFlag = typeof isPublic === "boolean" ? isPublic : true;
+
+    // Normalise image URLs: prefer the array, fall back to single, default empty
+    const imageUrls: string[] = Array.isArray(image_urls)
+      ? image_urls.filter((u): u is string => typeof u === "string" && Boolean(u))
+      : image_url
+        ? [image_url]
+        : [];
+
+    if (imageUrls.length > 5) {
+      updateProgress(progressId, "Error", 15, undefined, "Max 5 reference images allowed");
+      return NextResponse.json(
+        { error: true, message: "You can upload up to 5 reference images", progressId },
+        { status: 400 }
+      );
+    }
+
     if (!basicPrompt) {
       updateProgress(progressId, "Error", 15, undefined, "Prompt is missing");
       return NextResponse.json(
@@ -119,11 +118,9 @@ export async function POST(req: NextRequest) {
     (async () => {
       try {
         updateProgress(progressId, "Enhancing prompt", 25);
-        console.log("Sending for Prompt Enhancement. Image URL:", image_url);
-        const enhancedPromptResponse = await enhancePrompt(
-          basicPrompt,
-          image_url
-        );
+        console.log("Enhancing prompt. Image URLs:", imageUrls);
+
+        const enhancedPromptResponse = await enhancePrompt(basicPrompt, imageUrls);
         if (!enhancedPromptResponse) {
           throw new Error("Failed to enhance prompt: empty response");
         }
@@ -132,7 +129,6 @@ export async function POST(req: NextRequest) {
           throw new Error("Failed to parse enhanced prompt");
         }
         updateProgress(progressId, "Prompt enhanced", 35);
-        console.log("Got the enhanced prompt");
 
         const input = {
           aspect_ratio: "16:9",
@@ -146,12 +142,9 @@ export async function POST(req: NextRequest) {
 
         const { client, bucketName, publicBaseUrl } = getR2Config();
 
-        fal.config({
-          credentials: process.env.FAL_API_KEY
-        });
-        
+        fal.config({ credentials: process.env.FAL_API_KEY });
+
         const key = `thumbnails/generations/${Math.floor(Math.random() * 1000) + Date.now().toString()}.jpeg`;
-        
         const cmd = new PutObjectCommand({
           Bucket: bucketName,
           Key: key,
@@ -161,32 +154,35 @@ export async function POST(req: NextRequest) {
         updateProgress(progressId, "Preparing cloud storage", 50);
         const signedR2Url = await getSignedUrl(client, cmd, { expiresIn: 3600 });
 
+        // Switch model: use /edit when reference images are provided
+        const falModel =
+          imageUrls.length > 0 ? "fal-ai/nano-banana-2/edit" : "fal-ai/nano-banana-pro";
+
+        const falInput = {
+          prompt: enhancedContent,
+          num_images: 1,
+          aspect_ratio: "16:9",
+          output_format: "png",
+          safety_toleranc: "4",
+          resolution: "1K",
+          ...(imageUrls.length > 0 ? { image_urls: imageUrls } : {}),
+        };
+
         updateProgress(progressId, "Generating thumbnail with AI", 60);
-        console.log("Sending to Replicate");
-        
-        const response = await fal.subscribe("fal-ai/nano-banana-pro", {
-          input: {
-            prompt: enhancedContent,
-            num_images: 1,
-            aspect_ratio: "16:9",
-            output_format: "png",
-            safety_toleranc: "4",
-            resolution: "1K"
-            },
-        });
-        
-        if(!response || !response.data?.images?.[0]?.url){
+        console.log("Sending to FAL:", falModel);
+
+        const response = await fal.subscribe(falModel, { input: falInput });
+
+        if (!response || !response.data?.images?.[0]?.url) {
           throw new Error("AI generation failed or returned no output URL");
-        }  
+        }
         updateProgress(progressId, "AI generation complete", 75);
 
         updateProgress(progressId, "Downloading generated image", 80);
-        
         const imageResponse = await fetch(response.data.images[0].url);
-        if (!imageResponse.ok)
-          throw new Error(
-            `Failed to download generated image: ${imageResponse.statusText}`
-          );
+        if (!imageResponse.ok) {
+          throw new Error(`Failed to download generated image: ${imageResponse.statusText}`);
+        }
         const imageBuffer = await imageResponse.arrayBuffer();
 
         updateProgress(progressId, "Uploading to cloud storage", 85);
@@ -195,53 +191,54 @@ export async function POST(req: NextRequest) {
           headers: { "Content-Type": "image/jpeg" },
         });
         updateProgress(progressId, "Cloud upload complete", 90);
-        console.log("Upload to R2 complete");
 
         const finalImageUrl = `${publicBaseUrl}/${key}`;
         updateProgress(progressId, "Saving to database", 95);
-        console.log("Saving to DB");
-        await db.thumbnails.create({
+
+        const createdThumbnail = await db.thumbnails.create({
           data: {
             creatorID: user.id,
             link: finalImageUrl,
             prompt: input.prompt,
+            isPublic: publicFlag,
           },
         });
+
+        if (imageUrls.length > 0) {
+          await db.thumbnailReferenceImage.createMany({
+            data: imageUrls.map((url) => ({
+              url,
+              thumbnailId: createdThumbnail.id,
+            })),
+          });
+        }
+
         await reduceCredit({ email: user.email!, cost: 1 });
         updateProgress(progressId, "Complete", 100, finalImageUrl);
-        console.log("Saving to DB done");
+        console.log("Done");
       } catch (e: unknown) {
         console.error("Background generation error:", e);
         const errorMessage =
           e instanceof Error ? e.message : "Unknown error during generation";
         updateProgress(progressId, "Error", 100, undefined, errorMessage);
       } finally {
-        // Consider how long to keep the final status available for polling
-        setTimeout(() => progressStore.delete(progressId), 60000); // e.g., 1 minute
+        setTimeout(() => progressStore.delete(progressId), 60000);
       }
-    })(); // Self-invoking async function
+    })();
 
-    return NextResponse.json({ progressId }); // Return progressId immediately
+    return NextResponse.json({ progressId });
   } catch (e: unknown) {
-    // Catch errors from initial synchronous part
     console.error("Initial request processing error:", e);
     const errorMessage =
       e instanceof Error ? e.message : "Failed to process request";
-    // Ensure progressId is available if it was generated
-    updateProgress(
-      progressId,
-      "Error",
-      0,
-      undefined,
-      `Initial error: ${errorMessage}`
-    );
+    updateProgress(progressId, "Error", 0, undefined, `Initial error: ${errorMessage}`);
     return NextResponse.json(
       { error: true, message: errorMessage, progressId },
       { status: 500 }
     );
   }
 }
-// Inside route.tsx
+
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const progressId = url.searchParams.get("progressId");
@@ -259,6 +256,5 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const progress = progressStore.get(progressId);
-  return NextResponse.json(progress);
+  return NextResponse.json(progressStore.get(progressId));
 }

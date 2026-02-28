@@ -1,8 +1,12 @@
 import { PrismaClient } from "../generated/prisma/index.js";
 
-const prismaClientSingleton = () =>{
-    return new PrismaClient();
-}
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    datasources: {
+      db: { url: process.env.DATABASE_URL },
+    },
+  });
+};
 
 type prismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 

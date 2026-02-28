@@ -8,6 +8,9 @@ export async function POST(req:NextRequest){
     const data = await db.thumbnails.findUnique({
         where:{
             id:thumbnailid
+        },
+        include: {
+            referenceImages: true
         }
     });
 

@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ImagePlus, ArrowUp, Loader2, Download } from "lucide-react";
+import { ImagePlus, ArrowUp, Loader2, Download, X, Globe, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -22,13 +22,16 @@ interface ProgressState {
 }
 
 export default function GenerationPage() {
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imageLink, setLink] = useState<string>("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imageLinks, setImageLinks] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isPublic, setIsPublic] = useState(true);
+  const [videoTitle, setVideoTitle] = useState("");
+  const [externalPrompt, setExternalPrompt] = useState("");
   const [progressState, setProgressState] = useState<ProgressState>({
     step: "",
     progress: 0,
@@ -92,64 +95,123 @@ export default function GenerationPage() {
   );
 
   const uploadWithPresignedUrl = async (file: File): Promise<string> => {
+    const response = await fetch("/api/presigned-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        `Failed to get presigned URL: ${errorData.error || response.statusText}`
+      );
+    }
+
+    const { signedUrl, fileUrl } = await response.json();
+    const uploadResponse = await fetch(signedUrl, {
+      method: "PUT",
+      body: file,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error(
+        `Failed to upload file: ${uploadResponse.status} ${uploadResponse.statusText}`
+      );
+    }
+    return fileUrl;
+  };
+
+  const processSelectedFiles = async (files: File[]) => {
+    if (files.length === 0) return;
+    if (files.length > 5) {
+      toast("You can upload up to 5 images.");
+      return;
+    }
     try {
       setUploading(true);
-      const response = await fetch("/api/presigned-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileName: file.name, fileType: file.type }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Failed to get presigned URL: ${errorData.error || response.statusText}`
-        );
-      }
-
-      const { signedUrl, fileUrl } = await response.json();
-      const uploadResponse = await fetch(signedUrl, {
-        method: "PUT",
-        body: file,
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(
-          `Failed to upload file: ${uploadResponse.status} ${uploadResponse.statusText}`
-        );
-      }
-      setUploading(false);
-      return fileUrl;
+      setSelectedFiles(files);
+      const uploadedLinks = await Promise.all(
+        files.map((file) => uploadWithPresignedUrl(file))
+      );
+      setImageLinks(uploadedLinks);
     } catch (error) {
-      console.error("Error uploading:", error);
+      console.error("Error uploading selected files:", error);
+      toast("Failed to upload one or more images.");
+      setSelectedFiles([]);
+      setImageLinks([]);
+    } finally {
       setUploading(false);
-      throw error;
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-      const fileURL = await uploadWithPresignedUrl(e.target.files[0]);
-      setLink(fileURL);
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    await processSelectedFiles(files);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (files.length === 0) {
+      toast("Please drop image files only.");
+      return;
     }
+    await processSelectedFiles(files);
+  };
+
+  const clearImages = () => {
+    setSelectedFiles([]);
+    setImageLinks([]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   async function handleClick() {
     setLoading(true);
     setProgressState({ step: "Initializing...", progress: 0 });
 
-    if (!inputRef.current?.value) {
-      toast("Please enter a prompt.");
+    if (!videoTitle.trim()) {
+      toast("Please enter the video title.");
+      setLoading(false);
+      setProgressState({ step: "", progress: 0 });
+      return;
+    }
+
+    if (!externalPrompt.trim()) {
+      toast("Please enter an external prompt.");
       setLoading(false);
       setProgressState({ step: "", progress: 0 });
       return;
     }
 
     try {
+      const basicPrompt = [
+        `Video title: ${videoTitle.trim()}`,
+        `External prompt: ${externalPrompt.trim()}`,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+
       const response = await axios.post("/api/generate-thumbnail", {
-        basicPrompt: inputRef.current.value,
-        image_url: imageLink,
+        basicPrompt,
+        videoTitle: videoTitle.trim(),
+        externalPrompt: externalPrompt.trim(),
+        isPublic,
+        image_url: imageLinks[0],
+        image_urls: imageLinks.length > 0 ? imageLinks : undefined,
       });
 
       if (response.data.progressId) {
@@ -208,53 +270,151 @@ export default function GenerationPage() {
           </p>
         </div>
 
-        {/* Input Area */}
-        <div className="rounded-2xl border border-border/50 bg-card/30 overflow-hidden">
-          <textarea
-            ref={inputRef}
-            placeholder="A tech review thumbnail with bold text, dark background, and a glowing laptop..."
-            rows={4}
-            className="w-full px-5 pt-5 pb-3 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none"
-          />
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border/30">
-            <div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                className="hidden"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs rounded-lg gap-2 border-border/50"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {uploading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <ImagePlus className="h-3.5 w-3.5" />
-                )}
-                {uploading
-                  ? "Uploading..."
-                  : selectedFile
-                    ? selectedFile.name.substring(0, 20) + "..."
-                    : "Attach reference"}
-              </Button>
-            </div>
+        {/* Bento Input Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            <button
-              onClick={handleClick}
-              disabled={loading || uploading}
-              className="w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 disabled:opacity-50 flex items-center justify-center transition-colors cursor-pointer"
+          {/* Video Title — full width */}
+          <div className="rounded-2xl border border-border/50 bg-card/30 p-5 md:col-span-2">
+            <p className="text-xs font-medium text-muted-foreground mb-2">
+              Video title <span className="text-red-500">*</span>
+            </p>
+            <input
+              type="text"
+              value={videoTitle}
+              onChange={(e) => setVideoTitle(e.target.value)}
+              placeholder="10 AI Tools That Save Me 10 Hours/Week"
+              className="w-full rounded-xl border border-border/40 bg-background/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+            />
+          </div>
+
+          {/* External Prompt */}
+          <div className="rounded-2xl border border-border/50 bg-card/30 p-5 md:col-span-2">
+            <p className="text-xs font-medium text-muted-foreground mb-2">
+              External prompt <span className="text-red-500">*</span>
+            </p>
+            <textarea
+              value={externalPrompt}
+              onChange={(e) => setExternalPrompt(e.target.value)}
+              placeholder="Style, composition, mood, text overlays, colors..."
+              rows={6}
+              className="w-full rounded-xl border border-border/40 bg-background/30 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:ring-2 focus:ring-red-500/30"
+            />
+          </div>
+
+          {/* Reference Images — full width */}
+          <div className="rounded-2xl border border-border/50 bg-card/30 p-5 md:col-span-2">
+            <p className="text-xs font-medium text-muted-foreground mb-3">
+              Reference images{" "}
+              <span className="text-muted-foreground/50">(optional, up to 5)</span>
+            </p>
+
+            {/* Drop zone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`rounded-xl border-2 border-dashed p-5 transition-colors ${
+                isDragging
+                  ? "border-red-500 bg-red-500/5"
+                  : "border-border/50 bg-background/20"
+              }`}
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin text-white" />
-              ) : (
-                <ArrowUp className="h-4 w-4 text-white" />
+              <p className="text-xs text-muted-foreground mb-3">
+                Drag &amp; drop up to 5 images here, or choose files manually.
+              </p>
+
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs rounded-lg gap-2 border-border/50"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <ImagePlus className="h-3.5 w-3.5" />
+                    )}
+                    {uploading
+                      ? "Uploading..."
+                      : selectedFiles.length > 0
+                        ? `${selectedFiles.length} image${selectedFiles.length > 1 ? "s" : ""} selected`
+                        : "Choose files"}
+                  </Button>
+
+                  {selectedFiles.length > 0 && !uploading && (
+                    <button
+                      onClick={clearImages}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                      title="Clear selection"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {/* Public / Private toggle */}
+                  <div className="relative group/vis">
+                    <button
+                      type="button"
+                      onClick={() => setIsPublic((v) => !v)}
+                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                        isPublic
+                          ? "border-green-500/40 bg-green-500/10 text-green-500"
+                          : "border-border/50 bg-background/20 text-muted-foreground"
+                      }`}
+                    >
+                      {isPublic ? (
+                        <Globe className="h-3.5 w-3.5" />
+                      ) : (
+                        <Lock className="h-3.5 w-3.5" />
+                      )}
+                      {isPublic ? "Public" : "Private"}
+                    </button>
+
+                    {/* Tooltip */}
+                    <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-52 opacity-0 group-hover/vis:opacity-100 transition-opacity duration-150 z-10">
+                      <div className="rounded-lg bg-popover border border-border/60 px-3 py-2 shadow-md text-xs text-muted-foreground leading-relaxed">
+                        {isPublic
+                          ? "Your thumbnail will be visible to everyone on the Explore page. Click to make it private."
+                          : "Your thumbnail will only be visible to you. Click to show it on the Explore page."}
+                      </div>
+                      {/* Arrow */}
+                      <div className="absolute right-3 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-border/60" />
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleClick}
+                    disabled={loading || uploading}
+                    className="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 disabled:opacity-50 flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-white" />
+                    ) : (
+                      <ArrowUp className="h-4 w-4 text-white" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {selectedFiles.length > 0 && (
+                <p className="mt-2.5 text-xs text-muted-foreground/70 truncate">
+                  {selectedFiles.map((f) => f.name).join(", ")}
+                </p>
               )}
-            </button>
+            </div>
           </div>
         </div>
 
@@ -281,9 +441,7 @@ export default function GenerationPage() {
         {/* Results */}
         {images.length > 0 && (
           <div className="mt-10">
-            <h2
-              className={`text-lg font-semibold mb-4 ${sora.className}`}
-            >
+            <h2 className={`text-lg font-semibold mb-4 ${sora.className}`}>
               Generated
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

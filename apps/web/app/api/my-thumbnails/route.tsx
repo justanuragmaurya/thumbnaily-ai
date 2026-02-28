@@ -20,6 +20,9 @@ export async function GET(){
     const thumbnails = await db.thumbnails.findMany({
         where:{
             creatorID:user?.id
+        },
+        include: {
+            referenceImages: true
         }
     })
 

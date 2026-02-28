@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
 
   const thumbnails = await db.thumbnails.findMany({
     take: limit + 1,
+    where: { isPublic: true },
     orderBy: { createdAt: "desc" },
+    include: {
+      referenceImages: true,
+    },
     ...(cursor && {
       cursor: { id: cursor },
       skip: 1,
