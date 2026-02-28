@@ -17,6 +17,34 @@ interface ProgressData {
   error?: string;
 }
 const progressStore = new Map<string, ProgressData>();
+const getR2Config = () => {
+  const accountId = process.env.R2_ACCOUNT_ID;
+  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+  const bucketName = process.env.R2_BUCKET_NAME;
+  const publicBaseUrl = process.env.R2_PUBLIC_BASE_URL;
+
+  if (!accountId || !accessKeyId || !secretAccessKey || !bucketName || !publicBaseUrl) {
+    throw new Error(
+      "Missing one or more R2 env vars: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_BASE_URL"
+    );
+  }
+
+  return {
+    bucketName,
+    publicBaseUrl: publicBaseUrl.replace(/\/+$/, ""),
+    client: new S3Client({
+      region: "auto",
+      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    }),
+  };
+};
+
 const updateProgress = (
   progressId: string,
   step: string,
@@ -116,34 +144,22 @@ export async function POST(req: NextRequest) {
 
         updateProgress(progressId, "Initializing AI generation", 45);
 
-        if (!process.env.ACCESSKEYID || !process.env.SECRETACCESSKEY) {
-          console.error("AWS credentials missing from environment variables.");
-          throw new Error(
-            "AWS credentials missing. Cannot initialize S3 client."
-          );
-        }
+        const { client, bucketName, publicBaseUrl } = getR2Config();
 
         fal.config({
           credentials: process.env.FAL_API_KEY
-        });
-
-        const s3 = new S3Client({
-          region: "ap-south-1",
-          credentials: {
-            accessKeyId: process.env.ACCESSKEYID!,
-            secretAccessKey: process.env.SECRETACCESSKEY!,
-          },
         });
         
         const key = `thumbnails/generations/${Math.floor(Math.random() * 1000) + Date.now().toString()}.jpeg`;
         
         const cmd = new PutObjectCommand({
-          Bucket: "thumbnaily-storage",
+          Bucket: bucketName,
           Key: key,
+          ContentType: "image/jpeg",
         });
 
         updateProgress(progressId, "Preparing cloud storage", 50);
-        const signedS3Url = await getSignedUrl(s3, cmd);
+        const signedR2Url = await getSignedUrl(client, cmd, { expiresIn: 3600 });
 
         updateProgress(progressId, "Generating thumbnail with AI", 60);
         console.log("Sending to Replicate");
@@ -174,14 +190,14 @@ export async function POST(req: NextRequest) {
         const imageBuffer = await imageResponse.arrayBuffer();
 
         updateProgress(progressId, "Uploading to cloud storage", 85);
-        console.log("Sending to S3");
-        await axios.put(signedS3Url, imageBuffer, {
+        console.log("Uploading to R2");
+        await axios.put(signedR2Url, imageBuffer, {
           headers: { "Content-Type": "image/jpeg" },
         });
         updateProgress(progressId, "Cloud upload complete", 90);
-        console.log("Sent to S3");
+        console.log("Upload to R2 complete");
 
-        const finalImageUrl = `https://thumbnaily-storage.s3.ap-south-1.amazonaws.com/${key}`;
+        const finalImageUrl = `${publicBaseUrl}/${key}`;
         updateProgress(progressId, "Saving to database", 95);
         console.log("Saving to DB");
         await db.thumbnails.create({

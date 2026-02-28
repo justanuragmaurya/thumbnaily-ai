@@ -32,8 +32,17 @@ model Thumbnails{
   createdAt DateTime @default(now())
   creatorID String
   creator User @relation(fields: [creatorID], references: [id])
+  referenceImages ThumbnailReferenceImage[]
 }
 
+
+model ThumbnailReferenceImage {
+  id          String     @id @default(cuid())
+  url         String
+  thumbnailId String
+  thumbnail   Thumbnails @relation(fields: [thumbnailId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+}
 
 model WaitlistUsers{
   id String @id @default(cuid())

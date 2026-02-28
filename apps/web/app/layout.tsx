@@ -22,6 +22,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const twitterImagePath =
+    "thumbnails/assests/Screenshot+2025-06-07+at+17.36.39.png";
+  const twitterImageUrl = process.env.R2_PUBLIC_BASE_URL
+    ? `${process.env.R2_PUBLIC_BASE_URL.replace(/\/+$/, "")}/${twitterImagePath}`
+    : "https://thumbnaily-storage.s3.ap-south-1.amazonaws.com/thumbnails/assests/Screenshot+2025-06-07+at+17.36.39.png";
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -35,7 +41,7 @@ export default function RootLayout({
         />
         <meta
           name="twitter:image"
-          content="https://thumbnaily-storage.s3.ap-south-1.amazonaws.com/thumbnails/assests/Screenshot+2025-06-07+at+17.36.39.png"
+          content={twitterImageUrl}
         />
       </head>
       <body className={`${outfit.className} antialiased`}>
