@@ -45,8 +45,12 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'i.ytimg.com',
         pathname: '**'
+      },
+      {
+        protocol: 'https',
+        hostname: '**.r2.dev',
+        pathname: '**'
       }
-      
     ],
   },
 };
