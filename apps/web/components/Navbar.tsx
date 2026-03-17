@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { MaxWidthWrapper } from "@/components/MaxWidthWrapper";
 import { Sora } from "next/font/google";
 import { ModeToggle } from "./ModeToggle";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Github } from "lucide-react";
 import Link from "next/link";
 
 const sora = Sora({
@@ -44,6 +44,15 @@ function Navbar() {
             >
               Contact
             </Link>
+            <a
+              href="https://github.com/justanuragmaurya/thumbnaily-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github size={15} />
+              Contribute
+            </a>
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -85,6 +94,15 @@ function Navbar() {
             >
               Contact
             </Link>
+            <a
+              href="https://github.com/justanuragmaurya/thumbnaily-ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github size={15} />
+              Contribute
+            </a>
             <div className="flex items-center justify-between pt-3 border-t border-border/50">
               <ModeToggle />
               <Link

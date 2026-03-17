@@ -25,19 +25,22 @@ const stagger = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
-const thumbnails = [
-  "1.jpeg",
-  "2.jpeg",
-  "3.jpeg",
-  "4.jpeg",
-  "5.jpeg",
-  "6.jpeg",
-  "7.jpeg",
-  "9.jpeg",
-  "10.jpeg",
-  "11.jpeg",
-  "12.jpeg",
-  "13.jpeg",
+const fallbackRow1 = [
+  "/1.jpeg",
+  "/2.jpeg",
+  "/3.jpeg",
+  "/4.jpeg",
+  "/5.jpeg",
+  "/6.jpeg",
+];
+
+const fallbackRow2 = [
+  "/7.jpeg",
+  "/9.jpeg",
+  "/10.jpeg",
+  "/11.jpeg",
+  "/12.jpeg",
+  "/13.jpeg",
 ];
 
 const steps = [
@@ -88,88 +91,124 @@ const features = [
   },
 ];
 
-export default function LandingPage() {
+interface LandingPageProps {
+  thumbnailUrls?: string[];
+}
+
+export default function LandingPage({ thumbnailUrls = [] }: LandingPageProps) {
+  const hasDbThumbnails = thumbnailUrls.length >= 12;
+  const row1 = hasDbThumbnails ? thumbnailUrls.slice(0, 6) : fallbackRow1;
+  const row2 = hasDbThumbnails ? thumbnailUrls.slice(6, 12) : fallbackRow2;
+
   return (
     <div className="min-h-screen">
       {/* ── Hero ── */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center pt-16 overflow-hidden">
+      <section className="relative min-h-[100dvh] flex items-center pt-20 pb-12 lg:pt-16 lg:pb-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(220,38,38,0.08),transparent)] -z-10" />
 
-        <MaxWidthWrapper className="px-5 sm:px-6">
-          <motion.div
-            className="text-center max-w-3xl mx-auto"
-            variants={stagger}
-            initial="hidden"
-            animate="visible"
-          >
+        <div className="w-full lg:grid lg:grid-cols-[3fr_2fr] items-center">
+            {/* Left — copy */}
             <motion.div
-              variants={fadeUp}
-              className="inline-flex items-center gap-2 sm:gap-3 text-[0.65rem] sm:text-xs font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase text-red-500 mb-5 sm:mb-8"
+              className="px-5 sm:px-6 lg:pl-[max(1.5rem,calc((100vw-72rem)/2+1.5rem))] lg:pr-8"
+              variants={stagger}
+              initial="hidden"
+              animate="visible"
             >
-              <span className="w-5 sm:w-8 h-px bg-red-500/60" />
-              AI-Powered Generation
-              <span className="w-5 sm:w-8 h-px bg-red-500/60" />
+              <motion.div
+                variants={fadeUp}
+                className="inline-flex items-center gap-2 sm:gap-3 text-[0.65rem] sm:text-xs font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase text-red-500 mb-5 sm:mb-8"
+              >
+                <span className="w-5 sm:w-8 h-px bg-red-500/60" />
+                Open-Source &amp; AI-Powered
+                <span className="w-5 sm:w-8 h-px bg-red-500/60" />
+              </motion.div>
+
+              <motion.h1
+                variants={fadeUp}
+                className={`text-[2.5rem] leading-[1.05] sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight whitespace-nowrap sm:leading-[1] ${sora.className}`}
+              >
+                Thumbnails that
+                <br />
+                <span className="text-red-500">sell themselves.</span>
+              </motion.h1>
+
+              <motion.p
+                variants={fadeUp}
+                className="mt-5 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-lg text-muted-foreground/90 max-w-md leading-relaxed"
+              >
+                Type what your video is about. Get click-worthy,
+                studio-quality thumbnails in seconds — no design tools, no
+                templates, no creative block. Free and open-source.
+              </motion.p>
+
+              <motion.div
+                variants={fadeUp}
+                className="mt-7 sm:mt-10 md:mt-12 flex flex-col sm:flex-row items-start gap-3 sm:gap-4"
+              >
+                <Link
+                  href="/app"
+                  className="group inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-medium px-7 py-3 sm:px-8 sm:py-3.5 rounded-xl transition-all duration-200 text-sm sm:text-base"
+                >
+                  Create your first thumbnail
+                  <ArrowRight
+                    size={16}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </Link>
+                <a
+                  href="#demo"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-muted-foreground/30 hover:decoration-foreground/50 py-3"
+                >
+                  Watch the demo
+                </a>
+              </motion.div>
             </motion.div>
 
-            <motion.h1
-              variants={fadeUp}
-              className={`text-[2.5rem] leading-[1] sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight sm:leading-[0.95] ${sora.className}`}
-            >
-              Stop designing
-              <br />
-              <span className="text-red-500">thumbnails.</span>
-            </motion.h1>
-
-            <motion.p
-              variants={fadeUp}
-              className="mt-5 sm:mt-6 md:mt-8 text-sm sm:text-base md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed"
-            >
-              Let AI handle the pixels. You handle the content. Generate
-              scroll-stopping thumbnails in seconds with nothing but a text
-              prompt.
-            </motion.p>
-
+            {/* Right — dual carousel */}
             <motion.div
-              variants={fadeUp}
-              className="mt-7 sm:mt-10 md:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+              className="overflow-hidden h-[340px] sm:h-[400px] lg:h-[480px]"
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <Link
-                href="/app"
-                className="group inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-medium px-7 py-3 sm:px-8 sm:py-3.5 rounded-xl transition-all duration-200 text-sm sm:text-base"
-              >
-                Start generating
-                <ArrowRight
-                  size={16}
-                  className="group-hover:translate-x-0.5 transition-transform"
-                />
-              </Link>
-              <a
-                href="#demo"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 decoration-muted-foreground/30 hover:decoration-foreground/50"
-              >
-                See it in action
-              </a>
+              <div className="flex flex-col justify-center gap-4 sm:gap-5 h-full">
+                {/* Row 1 — left to right */}
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
+                  <div className="carousel-ltr">
+                    {[...row1, ...row1, ...row1].map((src, i) => (
+                      <Image
+                        key={`ltr-${i}`}
+                        src={src}
+                        alt="Generated thumbnail"
+                        width={280}
+                        height={158}
+                        className="w-44 sm:w-52 lg:w-60 aspect-video rounded-xl object-cover mx-2 shrink-0 hover:scale-105 transition-transform duration-300"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 2 — right to left */}
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background via-background/70 to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background via-background/70 to-transparent z-10 pointer-events-none" />
+                  <div className="carousel-rtl">
+                    {[...row2, ...row2, ...row2].map((src, i) => (
+                      <Image
+                        key={`rtl-${i}`}
+                        src={src}
+                        alt="Generated thumbnail"
+                        width={280}
+                        height={158}
+                        className="w-44 sm:w-52 lg:w-60 aspect-video rounded-xl object-cover mx-2 shrink-0 hover:scale-105 transition-transform duration-300"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </motion.div>
-          </motion.div>
-        </MaxWidthWrapper>
-      </section>
-
-      {/* ── Thumbnail Marquee ── */}
-      <section className="py-4 sm:py-6 overflow-hidden border-y border-border/50 relative">
-        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 md:w-40 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 md:w-40 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-
-        <div className="marquee-track">
-          {[...thumbnails, ...thumbnails].map((img, i) => (
-            <Image
-              key={i}
-              src={`/${img}`}
-              alt="Generated thumbnail"
-              width={320}
-              height={180}
-              className="w-40 sm:w-56 md:w-72 rounded-lg object-cover mx-1.5 sm:mx-2 opacity-50 hover:opacity-100 transition-opacity duration-300"
-            />
-          ))}
         </div>
       </section>
 
@@ -304,13 +343,13 @@ export default function LandingPage() {
               variants={fadeUp}
               className="max-w-4xl mx-auto aspect-video rounded-xl sm:rounded-2xl overflow-hidden border border-border/50"
             >
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube.com/embed/oNlLRvfjcbE"
-                title="Product Demo Video"
-                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
+              <video
+                className="w-full h-full object-cover"
+                src="https://pub-1032861f0f60406f96a2712bc9e02197.r2.dev/assests/demo-1773767336046.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
               />
             </motion.div>
           </motion.div>

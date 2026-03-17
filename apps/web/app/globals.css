@@ -192,3 +192,38 @@
     transform: translateX(-50%);
   }
 }
+
+.carousel-ltr {
+  display: flex;
+  width: max-content;
+  animation: scroll-ltr 25s linear infinite;
+}
+
+.carousel-rtl {
+  display: flex;
+  width: max-content;
+  animation: scroll-rtl 25s linear infinite;
+}
+
+.carousel-ltr:hover,
+.carousel-rtl:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-ltr {
+  from {
+    transform: translateX(-33.333%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scroll-rtl {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
