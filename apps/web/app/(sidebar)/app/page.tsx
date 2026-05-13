@@ -156,10 +156,7 @@ export default function GenerationPage() {
       img.onload = () => {
         if (img.width < 256) {
           setUploadError("Image width should be at least 256px");
-          resolve(true); // Allow but warn? User said "alert" so I'll warn but allow if requested, or just block. 
-          // The guide says "alert" and "return" if small. So I'll block.
-          // Wait, Step 7 says "return" if < 256.
-          // resolve(false); 
+          return resolve(false);
         }
         resolve(true);
       };
