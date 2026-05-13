@@ -22,6 +22,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@repo/db": "workspace:*",
+    "@repo/queue": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tabler/icons": "^3.34.0",
     "@tailwindcss/postcss": "^4.1.7",

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "standardwebhooks";
 import { WebhookPayload } from "@/lib/types";
-import { handlePayments } from "@/lib/payment";
+import db from "@repo/db";
+import { getPaymentProcessingQueue } from "@repo/queue";
+
+export const runtime = "nodejs";
 
 const WEBHOOK_SECRET = process.env.DODO_PAYMENTS_WEBHOOK_SECRET;
 
@@ -38,10 +41,33 @@ export async function POST(request: NextRequest) {
     const payload = webhook.verify(body, headers) as WebhookPayload;
 
     if(payload.data.payload_type==="Payment" && payload.type === "payment.succeeded"){
-        await handlePayments(payload);
+      const webhookEvent = await db.webhookEvent.upsert({
+        where: {
+          provider_providerEventId: {
+            provider: "dodo",
+            providerEventId: webhookId,
+          },
+        },
+        create: {
+          provider: "dodo",
+          providerEventId: webhookId,
+          type: payload.type,
+          status: "pending",
+          payload: payload as unknown as object,
+        },
+        update: {},
+      });
+
+      if (webhookEvent.status === "pending") {
+        await getPaymentProcessingQueue().add(
+          "process-payment",
+          { webhookEventId: webhookEvent.id },
+          { jobId: webhookEvent.id }
+        );
+      }
     }
 
-    return NextResponse.json({ message: "db update done" }, { status: 200 });
+    return NextResponse.json({ message: "webhook accepted" }, { status: 200 });
   } catch (error) {
     console.error("Webhook processing error:", error);
     return NextResponse.json(

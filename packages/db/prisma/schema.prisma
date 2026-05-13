@@ -22,7 +22,8 @@ model User {
   avatar       String?        
   password     String?        
   updatedAt    DateTime       @updatedAt
-  thumbnails Thumbnails[]
+  thumbnails   Thumbnails[]
+  generationJobs GenerationJob[]
 }
 
 model Thumbnails{
@@ -34,6 +35,9 @@ model Thumbnails{
   creatorID String
   creator User @relation(fields: [creatorID], references: [id])
   referenceImages ThumbnailReferenceImage[]
+
+  @@index([creatorID, createdAt(sort: Desc)])
+  @@index([isPublic, createdAt(sort: Desc)])
 }
 
 
@@ -43,10 +47,50 @@ model ThumbnailReferenceImage {
   thumbnailId String
   thumbnail   Thumbnails @relation(fields: [thumbnailId], references: [id], onDelete: Cascade)
   createdAt   DateTime   @default(now())
+
+  @@index([thumbnailId])
 }
 
 model WaitlistUsers{
   id String @id @default(cuid())
-  email String
+  email String @unique
   createdAt DateTime @default(now())
+}
+
+model GenerationJob {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status         String
+  basicPrompt    String
+  enhancedPrompt String?
+  imageUrls      String[]  @default([])
+  isPublic       Boolean   @default(true)
+  errorMessage   String?
+  progress       Int       @default(0)
+  resultUrl      String?
+  thumbnailId    String?
+  createdAt      DateTime  @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model WebhookEvent {
+  id              String    @id @default(cuid())
+  provider        String
+  providerEventId String
+  type            String
+  status          String
+  payload         Json
+  errorMessage    String?
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([provider, providerEventId])
+  @@index([status, createdAt(sort: Desc)])
 }

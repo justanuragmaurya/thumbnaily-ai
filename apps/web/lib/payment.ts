@@ -6,14 +6,6 @@ export const handlePayments = async(payload:WebhookPayload)=>{
     const email = payload.data.customer.email;
     const product_id = payload.data.product_cart[0]?.product_id;
 
-    const user = await db.user.findFirst({
-        where:{
-            email:email
-        }
-    })
-
-    const currentCredits = user?.credits as number;
-
     switch(product_id){
         case 'pdt_vNJc6ot0MMBfxSWtg6p2l':
             await db.user.update({
@@ -21,7 +13,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
                     email:email
                 },
                 data:{
-                    credits:currentCredits+100,
+                    credits:{ increment: 100 },
                 }
             })
             break;
@@ -31,7 +23,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
                     email:email
                 },
                 data:{
-                    credits:currentCredits+50,
+                    credits:{ increment: 50 },
                 }
             })
             break;
@@ -41,7 +33,7 @@ export const handlePayments = async(payload:WebhookPayload)=>{
                     email:email
                 },
                 data:{
-                    credits:currentCredits+25,
+                    credits:{ increment: 25 },
                 }
             })
             break;

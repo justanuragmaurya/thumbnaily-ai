@@ -9,6 +9,7 @@ const r2PublicHostname = (() => {
 })();
 
 const nextConfig = {
+  transpilePackages: ['@repo/queue'],
   allowedDevOrigins: [
     'http://165.22.214.246',
     'https://www.thumbnaily.in',

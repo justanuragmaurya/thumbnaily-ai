@@ -1,96 +1,37 @@
-// api/generate-thumbnail/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 import db from "@repo/db";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { enhancePrompt } from "@/lib/enhancePrompt";
 import { auth } from "@/lib/auth";
-import { reduceCredit } from "@/lib/credits";
-import { fal } from "@fal-ai/client";
+import {
+  getGenerationProgress,
+  deleteCacheKeys,
+  getThumbnailGenerationQueue,
+  setGenerationProgress,
+} from "@repo/queue";
 
-interface ProgressData {
-  step: string;
-  progress: number;
-  imageUrl?: string;
-  error?: string;
+export const runtime = "nodejs";
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+  }
 }
 
-const progressStore = new Map<string, ProgressData>();
-
-const getR2Config = () => {
-  const accountId = process.env.R2_ACCOUNT_ID;
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-  const bucketName = process.env.R2_BUCKET_NAME;
-  const publicBaseUrl = process.env.R2_PUBLIC_BASE_URL;
-
-  if (!accountId || !accessKeyId || !secretAccessKey || !bucketName || !publicBaseUrl) {
-    throw new Error(
-      "Missing one or more R2 env vars: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_BASE_URL"
-    );
-  }
-
-  return {
-    bucketName,
-    publicBaseUrl: publicBaseUrl.replace(/\/+$/, ""),
-    client: new S3Client({
-      region: "auto",
-      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-      forcePathStyle: true,
-      credentials: { accessKeyId, secretAccessKey },
-    }),
-  };
-};
-
-const updateProgress = (
-  progressId: string,
-  step: string,
-  progress: number,
-  imageUrl?: string,
-  error?: string
-) => {
-  progressStore.set(progressId, { step, progress, imageUrl, error });
-};
-
 export async function POST(req: NextRequest) {
-  const progressId = Math.random().toString(36).substring(7);
-  updateProgress(progressId, "Initializing", 0);
-
   try {
-    updateProgress(progressId, "Authenticating user", 5);
     const session = await auth();
     if (!session || !session.user?.email) {
-      updateProgress(progressId, "Error", 0, undefined, "Authentication failed");
       return NextResponse.json(
-        { error: true, message: "Not authenticated", progressId },
+        { error: true, message: "Not authenticated" },
         { status: 401 }
-      );
-    }
-
-    updateProgress(progressId, "Fetching user data", 10);
-    const user = await db.user.findFirst({
-      where: { email: session.user.email },
-    });
-    if (!user) {
-      updateProgress(progressId, "Error", 10, undefined, "User not found");
-      return NextResponse.json(
-        { error: true, message: "User not found", progressId },
-        { status: 404 }
-      );
-    }
-    if (user.credits <= 0) {
-      updateProgress(progressId, "Error", 10, undefined, "Insufficient credits");
-      return NextResponse.json(
-        { error: true, message: "Insufficient credits, please recharge", progressId },
-        { status: 402 }
       );
     }
 
     const { basicPrompt, image_url, image_urls, isPublic } = await req.json();
     const publicFlag = typeof isPublic === "boolean" ? isPublic : true;
 
-    // Normalise image URLs: prefer the array, fall back to single, default empty
     const imageUrls: string[] = Array.isArray(image_urls)
       ? image_urls.filter((u): u is string => typeof u === "string" && Boolean(u))
       : image_url
@@ -98,142 +39,119 @@ export async function POST(req: NextRequest) {
         : [];
 
     if (imageUrls.length > 5) {
-      updateProgress(progressId, "Error", 15, undefined, "Max 5 reference images allowed");
       return NextResponse.json(
-        { error: true, message: "You can upload up to 5 reference images", progressId },
+        { error: true, message: "You can upload up to 5 reference images" },
         { status: 400 }
       );
     }
 
     if (!basicPrompt) {
-      updateProgress(progressId, "Error", 15, undefined, "Prompt is missing");
       return NextResponse.json(
-        { error: true, message: "Prompt is required", progressId },
+        { error: true, message: "Prompt is required" },
         { status: 400 }
       );
     }
 
-    updateProgress(progressId, "Request accepted", 15);
+    const generationJob = await db.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { email: session.user.email! },
+        select: { id: true, credits: true },
+      });
 
-    (async () => {
-      try {
-        updateProgress(progressId, "Enhancing prompt", 25);
-        console.log("Enhancing prompt. Image URLs:", imageUrls);
-
-        const enhancedPromptResponse = await enhancePrompt(basicPrompt, imageUrls);
-        if (!enhancedPromptResponse) {
-          throw new Error("Failed to enhance prompt: empty response");
-        }
-        const { prompt: enhancedContent } = JSON.parse(enhancedPromptResponse);
-        if (!enhancedContent) {
-          throw new Error("Failed to parse enhanced prompt");
-        }
-        updateProgress(progressId, "Prompt enhanced", 35);
-
-        const input = {
-          aspect_ratio: "16:9",
-          output_format: "png",
-          output_quality: 100,
-          disable_safety_checker: true,
-          prompt: enhancedContent,
-        };
-
-        updateProgress(progressId, "Initializing AI generation", 45);
-
-        const { client, bucketName, publicBaseUrl } = getR2Config();
-
-        fal.config({ credentials: process.env.FAL_API_KEY });
-
-        const key = `thumbnails/generations/${Math.floor(Math.random() * 1000) + Date.now().toString()}.jpeg`;
-        const cmd = new PutObjectCommand({
-          Bucket: bucketName,
-          Key: key,
-          ContentType: "image/jpeg",
-        });
-
-        updateProgress(progressId, "Preparing cloud storage", 50);
-        const signedR2Url = await getSignedUrl(client, cmd, { expiresIn: 3600 });
-
-        // Switch model: use /edit when reference images are provided
-        const falModel =
-          imageUrls.length > 0 ? "fal-ai/nano-banana-2/edit" : "fal-ai/nano-banana-pro";
-
-        const falInput = {
-          prompt: enhancedContent,
-          num_images: 1,
-          aspect_ratio: "16:9",
-          output_format: "png",
-          safety_toleranc: "4",
-          resolution: "1K",
-          ...(imageUrls.length > 0 ? { image_urls: imageUrls } : {}),
-        };
-
-        updateProgress(progressId, "Generating thumbnail with AI", 60);
-        console.log("Sending to FAL:", falModel);
-
-        const response = await fal.subscribe(falModel, { input: falInput });
-
-        if (!response || !response.data?.images?.[0]?.url) {
-          throw new Error("AI generation failed or returned no output URL");
-        }
-        updateProgress(progressId, "AI generation complete", 75);
-
-        updateProgress(progressId, "Downloading generated image", 80);
-        const imageResponse = await fetch(response.data.images[0].url);
-        if (!imageResponse.ok) {
-          throw new Error(`Failed to download generated image: ${imageResponse.statusText}`);
-        }
-        const imageBuffer = await imageResponse.arrayBuffer();
-
-        updateProgress(progressId, "Uploading to cloud storage", 85);
-        console.log("Uploading to R2");
-        await axios.put(signedR2Url, imageBuffer, {
-          headers: { "Content-Type": "image/jpeg" },
-        });
-        updateProgress(progressId, "Cloud upload complete", 90);
-
-        const finalImageUrl = `${publicBaseUrl}/${key}`;
-        updateProgress(progressId, "Saving to database", 95);
-
-        const createdThumbnail = await db.thumbnails.create({
-          data: {
-            creatorID: user.id,
-            link: finalImageUrl,
-            prompt: input.prompt,
-            isPublic: publicFlag,
-          },
-        });
-
-        if (imageUrls.length > 0) {
-          await db.thumbnailReferenceImage.createMany({
-            data: imageUrls.map((url) => ({
-              url,
-              thumbnailId: createdThumbnail.id,
-            })),
-          });
-        }
-
-        await reduceCredit({ email: user.email!, cost: 1 });
-        updateProgress(progressId, "Complete", 100, finalImageUrl);
-        console.log("Done");
-      } catch (e: unknown) {
-        console.error("Background generation error:", e);
-        const errorMessage =
-          e instanceof Error ? e.message : "Unknown error during generation";
-        updateProgress(progressId, "Error", 100, undefined, errorMessage);
-      } finally {
-        setTimeout(() => progressStore.delete(progressId), 60000);
+      if (!user) {
+        throw new ApiError("User not found", 404);
       }
-    })();
 
-    return NextResponse.json({ progressId });
+      const reservedCredit = await tx.user.updateMany({
+        where: {
+          id: user.id,
+          credits: { gte: 1 },
+        },
+        data: {
+          credits: { decrement: 1 },
+        },
+      });
+
+      if (reservedCredit.count === 0) {
+        throw new ApiError("Insufficient credits, please recharge", 402);
+      }
+
+      return tx.generationJob.create({
+        data: {
+          userId: user.id,
+          status: "queued",
+          basicPrompt,
+          imageUrls,
+          isPublic: publicFlag,
+          progress: 0,
+        },
+      });
+    });
+
+    await setGenerationProgress({
+      jobId: generationJob.id,
+      status: "queued",
+      step: "Queued",
+      progress: 0,
+    });
+    await deleteCacheKeys(`credits:email:${session.user.email}`);
+
+    try {
+      await getThumbnailGenerationQueue().add(
+        "generate-thumbnail",
+        {
+          jobId: generationJob.id,
+          userId: generationJob.userId,
+          basicPrompt,
+          imageUrls,
+          isPublic: publicFlag,
+        },
+        {
+          jobId: generationJob.id,
+        }
+      );
+    } catch (error) {
+      await db.$transaction([
+        db.generationJob.update({
+          where: { id: generationJob.id },
+          data: {
+            status: "failed",
+            progress: 100,
+            errorMessage: "Failed to enqueue generation job",
+            completedAt: new Date(),
+          },
+        }),
+        db.user.update({
+          where: { id: generationJob.userId },
+          data: { credits: { increment: 1 } },
+        }),
+      ]);
+
+      await setGenerationProgress({
+        jobId: generationJob.id,
+        status: "failed",
+        step: "Error",
+        progress: 100,
+        error: "Failed to enqueue generation job",
+      });
+
+      throw error;
+    }
+
+    return NextResponse.json({ progressId: generationJob.id });
   } catch (e: unknown) {
-    console.error("Initial request processing error:", e);
+    console.error("Generation request processing error:", e);
+    if (e instanceof ApiError) {
+      return NextResponse.json(
+        { error: true, message: e.message },
+        { status: e.status }
+      );
+    }
+
     const errorMessage =
       e instanceof Error ? e.message : "Failed to process request";
-    updateProgress(progressId, "Error", 0, undefined, `Initial error: ${errorMessage}`);
     return NextResponse.json(
-      { error: true, message: errorMessage, progressId },
+      { error: true, message: errorMessage },
       { status: 500 }
     );
   }
@@ -249,12 +167,36 @@ export async function GET(req: NextRequest) {
       { status: 400 }
     );
   }
-  if (!progressStore.has(progressId)) {
+
+  const progress = await getGenerationProgress(progressId);
+  if (progress) {
+    return NextResponse.json(progress);
+  }
+
+  const generationJob = await db.generationJob.findUnique({
+    where: { id: progressId },
+    select: {
+      id: true,
+      status: true,
+      progress: true,
+      resultUrl: true,
+      errorMessage: true,
+    },
+  });
+
+  if (!generationJob) {
     return NextResponse.json(
       { error: "Invalid or expired progress ID" },
       { status: 404 }
     );
   }
 
-  return NextResponse.json(progressStore.get(progressId));
+  return NextResponse.json({
+    jobId: generationJob.id,
+    status: generationJob.status,
+    step: generationJob.status,
+    progress: generationJob.progress,
+    imageUrl: generationJob.resultUrl ?? undefined,
+    error: generationJob.errorMessage ?? undefined,
+  });
 }

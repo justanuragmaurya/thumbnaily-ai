@@ -1,12 +1,9 @@
 import OpenAI from "openai";
-import { systemPrompt } from "./prompts";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import { systemPrompt } from "./prompts.js";
 
-export async function enhancePrompt(
-  userPrompt: string,
-  image_urls: string[] = []
-) {
+export async function enhancePrompt(userPrompt: string, imageUrls: string[] = []) {
   const prompt = z.object({
     prompt: z.string(),
   });
@@ -16,10 +13,9 @@ export async function enhancePrompt(
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const validImageUrls = image_urls.filter(Boolean);
   const content: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [
     { type: "text", text: userPrompt },
-    ...validImageUrls.map((url) => ({
+    ...imageUrls.filter(Boolean).map((url) => ({
       type: "image_url" as const,
       image_url: { url },
     })),
@@ -34,14 +30,11 @@ export async function enhancePrompt(
       },
       {
         role: "user",
-        content: content,
+        content,
       },
     ],
     response_format: zodResponseFormat(prompt, "prompt"),
   });
 
-  if (!aiPrompt.choices[0]) {
-    return "";
-  }
-  return aiPrompt.choices[0].message.content;
+  return aiPrompt.choices[0]?.message.content ?? "";
 }

@@ -10,9 +10,15 @@ export async function POST(req:NextRequest){
     })
     }
     
-    await db.waitlistUsers.create({
-        data:{
-            email:email
+    await db.waitlistUsers.upsert({
+        where:{
+            email
+        },
+        create:{
+            email
+        },
+        update:{
+            email
         }
     })
 
