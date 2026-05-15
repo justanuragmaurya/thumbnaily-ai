@@ -34,20 +34,28 @@ export async function POST(request: NextRequest) {
   try {
     const { client, bucketName, publicBaseUrl } = getR2Config();
     const { fileName, fileType, fileSize } = await request.json();
-    
-    if (!fileName || !fileType) {
-      return NextResponse.json({ error: 'fileName and fileType are required' }, { status: 400 });
+
+    if (
+      !fileName ||
+      !fileType ||
+      typeof fileSize !== "number" ||
+      !Number.isFinite(fileSize)
+    ) {
+      return NextResponse.json(
+        { error: "fileName, fileType and valid fileSize are required" },
+        { status: 400 }
+      );
     }
 
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_SIZE = 20 * 1024 * 1024; // 20MB
     const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
     if (!ALLOWED_TYPES.includes(fileType)) {
       return NextResponse.json({ error: "Invalid file type. Please upload JPG, PNG, or WEBP" }, { status: 400 });
     }
 
-    if (fileSize && fileSize > MAX_SIZE) {
-      return NextResponse.json({ error: "File too large. Maximum size is 5MB" }, { status: 400 });
+    if (fileSize > MAX_SIZE) {
+      return NextResponse.json({ error: "File too large. Maximum size is 20MB" }, { status: 400 });
     }
 
     // Get proper file extension from fileType or fileName

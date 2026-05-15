@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, ArrowUp, Loader2, Download, X, Globe, Lock } from "lucide-react";
 import Image from "next/image";
@@ -21,7 +21,7 @@ interface ProgressState {
   error?: string;
 }
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export default function GenerationPage() {
@@ -41,6 +41,13 @@ export default function GenerationPage() {
   });
   const [uploadError, setUploadError] = useState("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  // Revoke object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
 
   const pollProgress = useCallback(
     async (progressId: string) => {
@@ -131,26 +138,26 @@ export default function GenerationPage() {
     return fileUrl;
   };
 
-  const validateImage = (file: File): Promise<boolean> => {
-    return new Promise((resolve) => {
-      // Type validation
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        setUploadError("Please upload JPG, PNG, or WEBP");
-        return resolve(false);
-      }
+  const validateImage = (file: File): boolean => {
+    // Type validation
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setUploadError("Please upload JPG, PNG, or WEBP");
+      return false;
+    }
 
-      // Size validation
-      if (file.size > MAX_SIZE) {
-        setUploadError("File must be under 5MB");
-        return resolve(false);
-      }
+    // Size validation
+    if (file.size > MAX_SIZE) {
+      setUploadError("File must be under 20MB");
+      return false;
+    }
 
-      // Zero byte validation
-      if (file.size === 0) {
-        setUploadError("File is corrupted or empty");
-        return resolve(false);
-      }
+    // Zero byte validation
+    if (file.size === 0) {
+      setUploadError("File is corrupted or empty");
+      return false;
+    }
 
+<<<<<<< HEAD
       // Dimension validation
       const img = new window.Image();
       img.onload = () => {
@@ -166,6 +173,9 @@ export default function GenerationPage() {
       };
       img.src = URL.createObjectURL(file);
     });
+=======
+    return true;
+>>>>>>> 0af51e1 (fix: update upload validation and cleanup preview URLs)
   };
 
   const processSelectedFiles = async (files: File[]) => {
@@ -178,16 +188,19 @@ export default function GenerationPage() {
 
     // Validate all files
     for (const file of files) {
-      const isValid = await validateImage(file);
+      const isValid = validateImage(file);
       if (!isValid) return;
     }
 
     try {
       setUploading(true);
       setSelectedFiles(files);
-      
+
+      // Revoke old preview URLs before creating new ones
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
       // Create previews
-      const urls = files.map(file => URL.createObjectURL(file));
+      const urls = files.map((file) => URL.createObjectURL(file));
       setPreviewUrls(urls);
 
       const uploadedLinks = await Promise.all(
@@ -234,6 +247,7 @@ export default function GenerationPage() {
   };
 
   const clearImages = () => {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
     setSelectedFiles([]);
     setImageLinks([]);
     setPreviewUrls([]);
