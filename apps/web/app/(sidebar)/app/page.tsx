@@ -157,25 +157,7 @@ export default function GenerationPage() {
       return false;
     }
 
-<<<<<<< HEAD
-      // Dimension validation
-      const img = new window.Image();
-      img.onload = () => {
-        if (img.width < 256) {
-          setUploadError("Image width should be at least 256px");
-          return resolve(false);
-        }
-        resolve(true);
-      };
-      img.onerror = () => {
-        setUploadError("Invalid image file");
-        resolve(false);
-      };
-      img.src = URL.createObjectURL(file);
-    });
-=======
     return true;
->>>>>>> 0af51e1 (fix: update upload validation and cleanup preview URLs)
   };
 
   const processSelectedFiles = async (files: File[]) => {
