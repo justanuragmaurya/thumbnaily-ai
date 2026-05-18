@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, ArrowUp, Loader2, Download, X, Globe, Lock } from "lucide-react";
 import Image from "next/image";
@@ -21,6 +21,9 @@ interface ProgressState {
   error?: string;
 }
 
+const MAX_SIZE = 20 * 1024 * 1024; // 20MB
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
 export default function GenerationPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -36,6 +39,15 @@ export default function GenerationPage() {
     step: "",
     progress: 0,
   });
+  const [uploadError, setUploadError] = useState("");
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  // Revoke object URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
 
   const pollProgress = useCallback(
     async (progressId: string) => {
@@ -98,7 +110,11 @@ export default function GenerationPage() {
     const response = await fetch("/api/presigned-url", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fileName: file.name, fileType: file.type }),
+      body: JSON.stringify({ 
+        fileName: file.name, 
+        fileType: file.type,
+        fileSize: file.size 
+      }),
     });
 
     if (!response.ok) {
@@ -122,24 +138,63 @@ export default function GenerationPage() {
     return fileUrl;
   };
 
+  const validateImage = (file: File): boolean => {
+    // Type validation
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setUploadError("Please upload JPG, PNG, or WEBP");
+      return false;
+    }
+
+    // Size validation
+    if (file.size > MAX_SIZE) {
+      setUploadError("File must be under 20MB");
+      return false;
+    }
+
+    // Zero byte validation
+    if (file.size === 0) {
+      setUploadError("File is corrupted or empty");
+      return false;
+    }
+
+    return true;
+  };
+
   const processSelectedFiles = async (files: File[]) => {
+    setUploadError("");
     if (files.length === 0) return;
     if (files.length > 5) {
-      toast("You can upload up to 5 images.");
+      setUploadError("You can upload up to 5 images.");
       return;
     }
+
+    // Validate all files
+    for (const file of files) {
+      const isValid = validateImage(file);
+      if (!isValid) return;
+    }
+
     try {
       setUploading(true);
       setSelectedFiles(files);
+
+      // Revoke old preview URLs before creating new ones
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
+      // Create previews
+      const urls = files.map((file) => URL.createObjectURL(file));
+      setPreviewUrls(urls);
+
       const uploadedLinks = await Promise.all(
         files.map((file) => uploadWithPresignedUrl(file))
       );
       setImageLinks(uploadedLinks);
     } catch (error) {
       console.error("Error uploading selected files:", error);
-      toast("Failed to upload one or more images.");
+      setUploadError("Failed to upload one or more images.");
       setSelectedFiles([]);
       setImageLinks([]);
+      setPreviewUrls([]);
     } finally {
       setUploading(false);
     }
@@ -174,8 +229,11 @@ export default function GenerationPage() {
   };
 
   const clearImages = () => {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
     setSelectedFiles([]);
     setImageLinks([]);
+    setPreviewUrls([]);
+    setUploadError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -408,6 +466,27 @@ export default function GenerationPage() {
                   </button>
                 </div>
               </div>
+
+              {uploadError && (
+                <p className="mt-2 text-xs text-red-500 font-medium">
+                  {uploadError}
+                </p>
+              )}
+
+              {previewUrls.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {previewUrls.map((url, idx) => (
+                    <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-border/50">
+                      <Image
+                        src={url}
+                        alt={`Preview ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {selectedFiles.length > 0 && (
                 <p className="mt-2.5 text-xs text-muted-foreground/70 truncate">
