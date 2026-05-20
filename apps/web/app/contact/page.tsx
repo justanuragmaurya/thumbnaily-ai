@@ -21,7 +21,7 @@ export default function ContactPage() {
       <Navbar />
 
       <main className="flex-1 flex items-center justify-center px-6 py-16">
-        <div className="max-w-6xl w-full grid md:grid-cols-2 gap-10 items-center">
+        <div className="max-w-3xl w-full mx-auto">
           {/* Left Section */}
           <div className="space-y-6">
             <div>
@@ -78,78 +78,6 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Right Section - Contact Form */}
-          <div className="border bg-card rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
-            <h2 className="text-3xl font-bold mb-6">Send a Message</h2>
-
-            <form className="space-y-5">
-              {/* Name */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">Name</label>
-
-                <div className="relative">
-                  <User
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    size={18}
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Enter your name"
-                    className="w-full border rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary transition-all bg-background"
-                  />
-                </div>
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">Email</label>
-
-                <div className="relative">
-                  <Mail
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    size={18}
-                  />
-
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full border rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary transition-all bg-background"
-                  />
-                </div>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Message
-                </label>
-
-                <div className="relative">
-                  <MessageSquare
-                    className="absolute left-3 top-4 text-muted-foreground"
-                    size={18}
-                  />
-
-                  <textarea
-                    rows={5}
-                    placeholder="Write your message..."
-                    className="w-full border rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary transition-all bg-background resize-none"
-                  />
-                </div>
-              </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl hover:opacity-90 transition-all font-medium"
-              >
-                <Send size={18} />
-                Send Message
-              </button>
-            </form>
           </div>
         </div>
       </main>
