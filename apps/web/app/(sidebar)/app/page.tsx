@@ -34,11 +34,6 @@ const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export default function GenerationPage() {
-  return (
-  <div className="p-10 text-white">
-    TEST PAGE
-  </div>
-);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
