@@ -546,8 +546,14 @@ export default function GenerationPage() {
                     </Link>
 
                     <button
+                      type="button"
                       onClick={async () => {
                         try {
+                          if (!navigator.clipboard?.writeText) {
+                            toast("Copy is not supported in this browser.");
+                            return;
+                          }
+
                           await navigator.clipboard.writeText(externalPrompt);
                           toast("Prompt copied successfully!");
                         } catch {
