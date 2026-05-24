@@ -1,8 +1,8 @@
 "use client";
 import axios from "axios";
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, type ChangeEvent, type DragEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { ImagePlus, ArrowUp, Loader2, Download, X, Globe, Lock } from "lucide-react";
+import { ImagePlus, ArrowUp, Loader2, Download, Copy, X, Globe, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -110,10 +110,10 @@ export default function GenerationPage() {
     const response = await fetch("/api/presigned-url", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        fileName: file.name, 
+      body: JSON.stringify({
+        fileName: file.name,
         fileType: file.type,
-        fileSize: file.size 
+        fileSize: file.size
       }),
     });
 
@@ -200,22 +200,22 @@ export default function GenerationPage() {
     }
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     await processSelectedFiles(files);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files).filter((f) =>
@@ -371,11 +371,10 @@ export default function GenerationPage() {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`rounded-xl border-2 border-dashed p-5 transition-colors ${
-                isDragging
-                  ? "border-red-500 bg-red-500/5"
-                  : "border-border/50 bg-background/20"
-              }`}
+              className={`rounded-xl border-2 border-dashed p-5 transition-colors ${isDragging
+                ? "border-red-500 bg-red-500/5"
+                : "border-border/50 bg-background/20"
+                }`}
             >
               <p className="text-xs text-muted-foreground mb-3">
                 Drag &amp; drop up to 5 images here, or choose files manually.
@@ -427,11 +426,10 @@ export default function GenerationPage() {
                     <button
                       type="button"
                       onClick={() => setIsPublic((v) => !v)}
-                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                        isPublic
-                          ? "border-green-500/40 bg-green-500/10 text-green-500"
-                          : "border-border/50 bg-background/20 text-muted-foreground"
-                      }`}
+                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${isPublic
+                        ? "border-green-500/40 bg-green-500/10 text-green-500"
+                        : "border-border/50 bg-background/20 text-muted-foreground"
+                        }`}
                     >
                       {isPublic ? (
                         <Globe className="h-3.5 w-3.5" />
@@ -536,7 +534,7 @@ export default function GenerationPage() {
                     alt="Generated thumbnail"
                     className="w-full"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center gap-3">
                     <Link
                       href={image}
                       target="_blank"
@@ -546,6 +544,22 @@ export default function GenerationPage() {
                         <Download className="h-4 w-4 text-black" />
                       </div>
                     </Link>
+
+                    <button
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(externalPrompt);
+                          toast("Prompt copied successfully!");
+                        } catch {
+                          toast("Failed to copy prompt.");
+                        }
+                      }}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                        <Copy className="h-4 w-4 text-black" />
+                      </div>
+                    </button>
                   </div>
                 </div>
               ))}
