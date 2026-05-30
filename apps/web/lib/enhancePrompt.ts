@@ -26,7 +26,7 @@ export async function enhancePrompt(
   ];
 
   const aiPrompt = await ai.chat.completions.create({
-    model: "google/gemini-3-flash-preview",
+    model: "openai/gpt-oss-120b:free",
     messages: [
       {
         role: "system",
