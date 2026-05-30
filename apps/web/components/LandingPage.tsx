@@ -3,7 +3,15 @@ import { motion } from "motion/react";
 import { Sora } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Zap, Palette, Github } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Palette,
+  Github,
+  Star,
+  Quote,
+} from "lucide-react";
 import { MaxWidthWrapper } from "./MaxWidthWrapper";
 
 const sora = Sora({
@@ -91,6 +99,45 @@ const features = [
   },
 ];
 
+const testimonials = [
+  {
+    quote:
+      "I went from blank page to publish-ready thumbnails in minutes. The AI gets the vibe of my channel better than the templates I used to build by hand.",
+    name: "Ayaan Pandey",
+    role: "Gaming creator",
+  },
+  {
+    quote:
+      "The turnaround is the real win. I can prototype three ideas before my coffee gets cold, and the outputs already look like they belong on a big channel.",
+    name: "Maya Gupta",
+    role: "Tech reviewer",
+  },
+  {
+    quote:
+      "It removed the most annoying part of publishing. I describe the video, pick a style, and I’m done. That alone has saved me hours every week.",
+    name: "Rohit Patel",
+    role: "Educational creator",
+  },
+  {
+    quote:
+      "The thumbnails look polished enough that I stopped second-guessing every upload. I just generate, pick one, and move on to the actual video.",
+    name: "Neha Sharma",
+    role: "Lifestyle creator",
+  },
+  {
+    quote:
+      "I used to spend an hour on one thumbnail. Now I get options fast enough to test different hooks before I even hit publish.",
+    name: "Kabir Singh",
+    role: "Short-form educator",
+  },
+  {
+    quote:
+      "It feels like having a motion designer on standby. The output is consistent, fast, and way less stressful than starting from scratch.",
+    name: "Sara Khan",
+    role: "Product reviewer",
+  },
+];
+
 interface LandingPageProps {
   thumbnailUrls?: string[];
 }
@@ -99,6 +146,7 @@ export default function LandingPage({ thumbnailUrls = [] }: LandingPageProps) {
   const hasDbThumbnails = thumbnailUrls.length >= 12;
   const row1 = hasDbThumbnails ? thumbnailUrls.slice(0, 6) : fallbackRow1;
   const row2 = hasDbThumbnails ? thumbnailUrls.slice(6, 12) : fallbackRow2;
+  const marqueeTestimonials = [...testimonials, ...testimonials];
 
   return (
     <div className="min-h-screen">
@@ -309,6 +357,73 @@ export default function LandingPage({ thumbnailUrls = [] }: LandingPageProps) {
                   </p>
                 </motion.div>
               ))}
+            </div>
+          </motion.div>
+        </MaxWidthWrapper>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="py-14 sm:py-20 md:py-32 border-t border-border/50 bg-card/10">
+        <MaxWidthWrapper className="px-5 sm:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+          >
+            <motion.div
+              variants={fadeUp}
+              className="text-center mb-10 sm:mb-14 md:mb-20"
+            >
+              <div className="inline-flex items-center gap-2 sm:gap-3 text-[0.65rem] sm:text-xs font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase text-red-500 mb-3 sm:mb-4">
+                <span className="w-5 sm:w-8 h-px bg-red-500/60" />
+                Testimonials
+                <span className="w-5 sm:w-8 h-px bg-red-500/60" />
+              </div>
+              <h2
+                className={`text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight ${sora.className}`}
+              >
+                Creators are shipping faster.
+              </h2>
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+                A few words from creators who use Thumbnaily to turn ideas into
+                thumbnails without the usual back-and-forth.
+              </p>
+            </motion.div>
+
+            <div className="relative overflow-hidden">
+              <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 sm:w-24 bg-gradient-to-r from-background via-background/90 to-transparent" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 sm:w-24 bg-gradient-to-l from-background via-background/90 to-transparent" />
+
+              <div className="marquee-track gap-4 sm:gap-5 py-1">
+                {marqueeTestimonials.map((testimonial, index) => (
+                  <motion.figure
+                    key={`${testimonial.name}-${index}`}
+                    variants={fadeUp}
+                    className="relative flex aspect-square w-56 sm:w-64 shrink-0 flex-col rounded-xl sm:rounded-2xl border border-border/50 bg-background/80 p-4 sm:p-5 backdrop-blur-sm"
+                  >
+                    <Quote className="absolute top-5 right-5 h-6 w-6 text-red-500/20" />
+                    <div className="mb-3 flex items-center gap-1 text-red-500">
+                      {[...Array(5)].map((_, starIndex) => (
+                        <Star key={starIndex} className="h-4 w-4 fill-current" />
+                      ))}
+                    </div>
+                    <blockquote className="text-sm sm:text-base leading-relaxed text-foreground/90">
+                      “{testimonial.quote}”
+                    </blockquote>
+                    <figcaption className="mt-auto pt-4 border-t border-border/60">
+                      <div
+                        className={`text-sm sm:text-base font-semibold ${sora.className}`}
+                      >
+                        {testimonial.name}
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mt-1">
+                        {testimonial.role}
+                      </div>
+                    </figcaption>
+                  </motion.figure>
+                ))}
+              </div>
             </div>
           </motion.div>
         </MaxWidthWrapper>
