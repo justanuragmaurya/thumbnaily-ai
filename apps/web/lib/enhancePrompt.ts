@@ -26,7 +26,7 @@ export async function enhancePrompt(
   ];
 
   const aiPrompt = await ai.chat.completions.create({
-    model: "google/gemini-3-flash-preview",
+    model: "nvidia/nemotron-3-ultra-550b-a55b:free",
     messages: [
       {
         role: "system",
