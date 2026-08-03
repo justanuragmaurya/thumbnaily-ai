@@ -30,7 +30,7 @@ Our mission is to help creators focus on what they do best—creating amazing co
 * **🖼️ Reference Image Upload**: Have a specific vision? Upload a reference image to guide the AI on style, composition, and mood.
 * **👤 User Accounts & Gallery**: Sign in with your Google account to save and manage all your generated thumbnails in a personal gallery.
 * **🌍 Public Showcase**: Explore a public feed of creations from the community to get inspired for your next thumbnail.
-* **💳 Simple Credit System**: A straightforward, pay-as-you-go credit system for generating thumbnails. Get free credits upon signing up!
+* **💳 Simple Credit System**: A straightforward, pay-as-you-go credit system for generating thumbnails. Free credits are provided upon signing up.
 
 ---
 ## 🛠️ Tech Stack
